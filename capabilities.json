@@ -1,0 +1,102 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "name",
+            "name": "category",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "report to",
+            "name": "reportTo",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "team",
+            "name": "team",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "position",
+            "name": "position",
+            "kind": "Grouping"
+        }
+    ],
+    "objects": {
+        "dataPoint": {
+            "displayName": "Data colors",
+            "properties": {
+                "defaultColor": {
+                    "displayName": "Default color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "showAllDataPoints": {
+                    "displayName": "Show all",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "fill": {
+                    "displayName": "Fill",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "fillRule": {
+                    "displayName": "Color saturation",
+                    "type": {
+                        "fill": {}
+                    }
+                },
+                 "fontSize": {
+                    "displayName": "Text Size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "dataViewMappings": [
+        {
+             "table": {
+                "rows": {
+                    "select": [
+                        {
+                            "for": {
+                                "in": "category"
+                            }
+                        },
+                        {
+                            "for": {
+                                "in": "reportTo"
+                            }
+                        },
+                        {
+                            "for": {
+                                "in": "team"
+                            }
+                        },
+                        {
+                            "for": {
+                                "in": "position"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
+ 
