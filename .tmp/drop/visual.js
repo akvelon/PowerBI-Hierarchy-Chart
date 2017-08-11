@@ -678,7 +678,7 @@ var powerbi;
                     DrawControlPanel.prototype.drawingControlButtons = function (options, heightOfTheShape, newModel, numberOfVisibleLevels, listTeams) {
                         var windowWidth = options.viewport.width;
                         var screenCenterCoordinates = windowWidth / 2;
-                        var shearSize = screenCenterCoordinates / 8;
+                        var shearSize = screenCenterCoordinates / 4;
                         var xButtonCoordinateAdd = screenCenterCoordinates - shearSize;
                         var xButtonCoordinateMinus = screenCenterCoordinates + shearSize;
                         var yButtonCoordinate = options.viewport.width / 50;
@@ -723,21 +723,23 @@ var powerbi;
                         this.drawingControlPanel(options, modelWithVisibleElements, listTeams, heightOfTheShape, numberOfVisibleLevels);
                     };
                     DrawControlPanel.prototype.drawingMarks = function (options, listTeams, heightOfTheShape) {
-                        var xCircleCoordinate = 10;
-                        var yCircleCoordinate = 10;
-                        var yCircleCoordinateForTheSecondHalf = 10;
                         var radius = heightOfTheShape / (listTeams.teamModel.length * 1.5);
+                        var widthWindow = options.viewport.width;
+                        var xCircleCoordinate = radius * 1.2;
+                        var yCircleCoordinate = radius * 1.2;
+                        var yCircleCoordinateForTheSecondHalf = radius * 1.2;
+                        var xTextCoordinate = radius + widthWindow / 8;
                         for (var i = 0; i < listTeams.teamModel.length; i++) {
                             var color = listTeams.teamModel[i].color;
                             if (i < (listTeams.teamModel.length / 2)) {
                                 this.drawingColorMarks(options, xCircleCoordinate, yCircleCoordinate, radius, color);
-                                this.drawingTextMarks(options, xCircleCoordinate, yCircleCoordinate, listTeams.teamModel[i].team, radius);
+                                this.drawingTextMarks(options, xTextCoordinate, yCircleCoordinate, listTeams.teamModel[i].team, radius);
                                 yCircleCoordinate = yCircleCoordinate + radius * 2.5;
                             }
                             else {
-                                xCircleCoordinate = options.viewport.width - 10;
+                                xCircleCoordinate = widthWindow - radius * 1.2;
                                 this.drawingColorMarks(options, xCircleCoordinate, yCircleCoordinateForTheSecondHalf, radius, color);
-                                this.drawingTextMarks(options, xCircleCoordinate - radius * 35, yCircleCoordinateForTheSecondHalf, listTeams.teamModel[i].team, radius);
+                                this.drawingTextMarks(options, xCircleCoordinate - widthWindow / 8, yCircleCoordinateForTheSecondHalf, listTeams.teamModel[i].team, radius);
                                 yCircleCoordinateForTheSecondHalf = yCircleCoordinateForTheSecondHalf + radius * 2.5;
                             }
                         }
@@ -757,16 +759,19 @@ var powerbi;
                         });
                     };
                     DrawControlPanel.prototype.drawingTextMarks = function (options, xCircleCoordinate, yCircleCoordinate, team, radius) {
+                        var calculationsForDrawing = new CalculationsForDrawing();
+                        CalculationsForDrawing;
+                        var fontSize = calculationsForDrawing.definitionOfTheSmallestValue(radius * 2.5, options.viewport.width / 60);
                         Visual.nameTextValue = Visual.barGroup.append("text")
                             .classed("nameTextValue", true);
                         Visual.nameTextValue
                             .text(team)
                             .attr({
-                            x: xCircleCoordinate + radius * 18,
+                            x: xCircleCoordinate,
                             y: yCircleCoordinate,
                             dy: "0.35em",
                             "text-anchor": "middle"
-                        }).style("font-size", radius * 2.5 + "px")
+                        }).style("font-size", fontSize + "px")
                             .style("font-family", "cursive")
                             .style("text-align", "left");
                     };
@@ -786,7 +791,10 @@ var powerbi;
                         var heightOfTheShape = 0;
                         var calculationsForDrawing = new CalculationsForDrawing();
                         heightOfTheShape = calculationsForDrawing.calculatingTheHeightOfShape(heightOfTheWindow);
+                        heightOfTheShape = calculationsForDrawing.definitionOfTheSmallestValue(heightOfTheShape, heightOfTheWindow / 5);
                         widthOfTheShape = calculationsForDrawing.calculatingTheWidthOfShape(widthOfTheWindow);
+                        widthOfTheShape = calculationsForDrawing.definitionOfTheSmallestValue(widthOfTheShape, widthOfTheWindow / 5);
+                        var isHeightGreaterThanWidth = calculationsForDrawing.definitionOfTheLargerValue(heightOfTheShape, widthOfTheShape);
                         var fontSizeValue = heightOfTheShape / 7;
                         var xCenterCoordinate = 0;
                         var yCenterCoordinate = heightOfTheShape + (heightOfTheShape / 10);
@@ -809,8 +817,8 @@ var powerbi;
                                     this.drawingRectangle(xCenterCoordinate, yCenterCoordinate, heightOfTheShape, widthOfTheShape, newModel, options, listTeams, color, numberOfVisibleLevels, newModel.dataPoints[i].lvl);
                                     var offsetValue = fontSizeValue / 2;
                                     var tempName = newModel.dataPoints[i].name.split(" ");
-                                    this.drawingName(xCenterCoordinate, yCenterCoordinate, tempName, newModel, options, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels, newModel.dataPoints[i].lvl);
-                                    this.drawingSurname(xCenterCoordinate, yCenterCoordinate, tempName, newModel, options, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels, newModel.dataPoints[i].lvl);
+                                    this.drawingName(xCenterCoordinate, yCenterCoordinate, tempName, newModel, options, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels, newModel.dataPoints[i].lvl, isHeightGreaterThanWidth);
+                                    this.drawingSurname(xCenterCoordinate, yCenterCoordinate, tempName, newModel, options, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels, newModel.dataPoints[i].lvl, isHeightGreaterThanWidth);
                                     newModel.dataPoints[i].xCoordinate = xCenterCoordinate;
                                     newModel.dataPoints[i].yCoordinate = yCenterCoordinate;
                                 }
@@ -848,19 +856,32 @@ var powerbi;
                             }
                         });
                     };
-                    DrawElements.prototype.drawingName = function (xCenterCoordinate, yCenterCoordinate, tempName, newModel, options, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels, lvl) {
+                    DrawElements.prototype.drawingName = function (xCenterCoordinate, yCenterCoordinate, tempName, newModel, options, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels, lvl, isHeightGreaterThanWidth) {
                         var _this = this;
+                        var writingMode;
+                        var xCoordinate;
+                        var yCoordinate;
+                        if (isHeightGreaterThanWidth) {
+                            writingMode = "tb";
+                            xCoordinate = xCenterCoordinate + offsetValue;
+                            yCoordinate = yCenterCoordinate - fontSizeValue * 3.5;
+                        }
+                        else {
+                            writingMode = "bt";
+                            xCoordinate = xCenterCoordinate;
+                            yCoordinate = yCenterCoordinate - fontSizeValue * 3.5 - offsetValue;
+                        }
                         Visual.nameTextValue = Visual.barGroup.append("text")
                             .classed("nameTextValue", true);
                         Visual.nameTextValue
                             .text(tempName[0])
                             .attr({
-                            x: xCenterCoordinate + offsetValue,
-                            y: yCenterCoordinate - fontSizeValue * 3.5,
+                            x: xCoordinate,
+                            y: yCoordinate,
                             dy: "0.35em",
                             "text-anchor": "middle"
                         }).style("font-size", fontSizeValue + "px")
-                            .style("writing-mode", "tb")
+                            .style("writing-mode", writingMode)
                             .style("font-family", "cursive")
                             .on('click', function () {
                             if (lvl != 0) {
@@ -868,8 +889,21 @@ var powerbi;
                             }
                         });
                     };
-                    DrawElements.prototype.drawingSurname = function (xCenterCoordinate, yCenterCoordinate, tempName, newModel, options, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels, lvl) {
+                    DrawElements.prototype.drawingSurname = function (xCenterCoordinate, yCenterCoordinate, tempName, newModel, options, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels, lvl, isHeightGreaterThanWidth) {
                         var _this = this;
+                        var writingMode;
+                        var xCoordinate;
+                        var yCoordinate;
+                        if (isHeightGreaterThanWidth) {
+                            writingMode = "tb";
+                            xCoordinate = xCenterCoordinate - offsetValue;
+                            yCoordinate = yCenterCoordinate - fontSizeValue * 3.5;
+                        }
+                        else {
+                            writingMode = "bt";
+                            xCoordinate = xCenterCoordinate;
+                            yCoordinate = yCenterCoordinate - fontSizeValue * 3.5 + offsetValue;
+                        }
                         Visual.surnameTextValue = Visual.barGroup.append("text")
                             .classed("surnameTextValue", true);
                         var textValue = "";
@@ -879,12 +913,12 @@ var powerbi;
                         Visual.surnameTextValue
                             .text(textValue + ", " + newModel.dataPoints[i].position)
                             .attr({
-                            x: xCenterCoordinate - offsetValue,
-                            y: yCenterCoordinate - fontSizeValue * 3.5,
+                            x: xCoordinate,
+                            y: yCoordinate,
                             dy: "0.35em",
                             "text-anchor": "middle"
                         }).style("font-size", fontSizeValue / 1.5 + "px")
-                            .style("writing-mode", "tb")
+                            .style("writing-mode", writingMode)
                             .style("font-family", "cursive")
                             .on('click', function () {
                             if (lvl != 0) {
@@ -963,6 +997,22 @@ var powerbi;
                 var CalculationsForDrawing = (function () {
                     function CalculationsForDrawing() {
                     }
+                    CalculationsForDrawing.prototype.definitionOfTheSmallestValue = function (firstValue, secondValue) {
+                        if (firstValue < secondValue) {
+                            return firstValue;
+                        }
+                        else {
+                            return secondValue;
+                        }
+                    };
+                    CalculationsForDrawing.prototype.definitionOfTheLargerValue = function (firstValue, secondValue) {
+                        if (firstValue > secondValue) {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
+                    };
                     CalculationsForDrawing.prototype.calculatingTheWidthOfShape = function (widthOfTheWindow) {
                         var maxNumberOfElementsAtTheLevel = this.searchMaximumNumberOfElementsAtTheLevel();
                         var widthOfTheShape = widthOfTheWindow / (maxNumberOfElementsAtTheLevel * 1.2);
@@ -970,7 +1020,7 @@ var powerbi;
                     };
                     CalculationsForDrawing.prototype.calculatingTheHeightOfShape = function (heightOfTheWindow) {
                         var maxNumberOfTheLevel = Visual.numberOfElementsAtTheLevelThatIsVisible.length;
-                        var heightOfTheShape = heightOfTheWindow / (maxNumberOfTheLevel * 1.15);
+                        var heightOfTheShape = heightOfTheWindow / (maxNumberOfTheLevel * 1.3);
                         return heightOfTheShape;
                     };
                     CalculationsForDrawing.prototype.searchMaximumNumberOfElementsAtTheLevel = function () {
@@ -1048,16 +1098,11 @@ var powerbi;
                             nameOfTheParent = listNames[0];
                             listNames.splice(0, 1);
                             for (var i = 0; i < newModel.dataPoints.length; i++) {
-                                if (isVisible) {
-                                    if (newModel.dataPoints[i].reportTo === nameOfTheParent) {
-                                        newModel.dataPoints[i].isVisible = isVisible;
-                                    }
-                                }
-                                else {
-                                    if (newModel.dataPoints[i].reportTo === nameOfTheParent) {
-                                        newModel.dataPoints[i].isVisible = isVisible;
+                                if (newModel.dataPoints[i].reportTo === nameOfTheParent) {
+                                    if (!isVisible) {
                                         listNames.push(newModel.dataPoints[i].name);
                                     }
+                                    newModel.dataPoints[i].isVisible = isVisible;
                                 }
                             }
                         } while (listNames.length != 0);
@@ -1102,11 +1147,6 @@ var powerbi;
                             dataPoints: []
                         };
                         var _lvl = 0;
-                        var cashCount = 1;
-                        var prevCount = 0;
-                        var pushV = false;
-                        var lvlUpReady = false;
-                        var resCount = 0;
                         var newViewModel = {
                             dataPoints: []
                         };
@@ -1236,8 +1276,8 @@ var powerbi;
     (function (visuals) {
         var plugins;
         (function (plugins) {
-            plugins.chart6F792A8745784877BCD8F4ACA5AD4207_DEBUG = {
-                name: 'chart6F792A8745784877BCD8F4ACA5AD4207_DEBUG',
+            plugins.chart6F792A8745784877BCD8F4ACA5AD4207 = {
+                name: 'chart6F792A8745784877BCD8F4ACA5AD4207',
                 displayName: 'chart',
                 class: 'Visual',
                 version: '1.0.0',

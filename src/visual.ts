@@ -152,7 +152,7 @@ module powerbi.extensibility.visual {
         public drawingControlButtons(options: VisualUpdateOptions, heightOfTheShape, newModel: ViewModel, numberOfVisibleLevels, listTeams: TeamModelList) {
             let windowWidth = options.viewport.width;
             let screenCenterCoordinates = windowWidth / 2;
-            let shearSize = screenCenterCoordinates / 8;
+            let shearSize = screenCenterCoordinates / 4;
             let xButtonCoordinateAdd = screenCenterCoordinates - shearSize;
             let xButtonCoordinateMinus = screenCenterCoordinates + shearSize;
             let yButtonCoordinate = options.viewport.width / 50;
@@ -202,21 +202,25 @@ module powerbi.extensibility.visual {
         }
 
         public drawingMarks(options: VisualUpdateOptions, listTeams: TeamModelList, heightOfTheShape) {
-            let xCircleCoordinate = 10;
-            let yCircleCoordinate = 10;
-            let yCircleCoordinateForTheSecondHalf = 10;
+           
             let radius = heightOfTheShape / (listTeams.teamModel.length * 1.5);
+            let widthWindow = options.viewport.width;
+            let xCircleCoordinate = radius*1.2;
+            let yCircleCoordinate = radius*1.2;
+            let yCircleCoordinateForTheSecondHalf = radius*1.2;
+            let xTextCoordinate = radius + widthWindow/8; 
+
             for (let i = 0; i < listTeams.teamModel.length; i++) {
                 let color = listTeams.teamModel[i].color;
                 if (i < (listTeams.teamModel.length / 2)) {
                     this.drawingColorMarks(options, xCircleCoordinate, yCircleCoordinate, radius, color);
-                    this.drawingTextMarks(options, xCircleCoordinate, yCircleCoordinate, listTeams.teamModel[i].team, radius);
+                    this.drawingTextMarks(options, xTextCoordinate, yCircleCoordinate, listTeams.teamModel[i].team, radius);
                     yCircleCoordinate = yCircleCoordinate + radius * 2.5;
                 }
                 else {
-                    xCircleCoordinate = options.viewport.width - 10;
+                    xCircleCoordinate = widthWindow - radius*1.2;
                     this.drawingColorMarks(options, xCircleCoordinate, yCircleCoordinateForTheSecondHalf, radius, color);
-                    this.drawingTextMarks(options, xCircleCoordinate - radius * 35, yCircleCoordinateForTheSecondHalf, listTeams.teamModel[i].team, radius);
+                    this.drawingTextMarks(options, xCircleCoordinate - widthWindow/8, yCircleCoordinateForTheSecondHalf, listTeams.teamModel[i].team, radius);
                     yCircleCoordinateForTheSecondHalf = yCircleCoordinateForTheSecondHalf + radius * 2.5;
                 }
             }
@@ -240,21 +244,26 @@ module powerbi.extensibility.visual {
         }
 
         public drawingTextMarks(options: VisualUpdateOptions, xCircleCoordinate, yCircleCoordinate, team, radius) {
+            
+            let calculationsForDrawing: CalculationsForDrawing = new CalculationsForDrawing();
+            CalculationsForDrawing
+            let fontSize = calculationsForDrawing.definitionOfTheSmallestValue(radius * 2.5, options.viewport.width/60);
+
             Visual.nameTextValue = Visual.barGroup.append("text")
                 .classed("nameTextValue", true);
 
             Visual.nameTextValue
                 .text(team)
                 .attr({
-                    x: xCircleCoordinate + radius * 18,
+                    x: xCircleCoordinate ,
                     y: yCircleCoordinate,
                     dy: "0.35em",
                     "text-anchor": "middle"
-                }).style("font-size", radius * 2.5 + "px")
+                }).style("font-size", fontSize + "px")
                 .style("font-family", "cursive")
                 .style("text-align", "left")
         }
-    }
+    } 
 
 
 
@@ -267,13 +276,15 @@ module powerbi.extensibility.visual {
                 width: widthOfTheWindow,
                 height: heightOfTheWindow
             });
-
             let widthOfTheShape = 0;
             let heightOfTheShape = 0;
 
             let calculationsForDrawing: CalculationsForDrawing = new CalculationsForDrawing();
             heightOfTheShape = calculationsForDrawing.calculatingTheHeightOfShape(heightOfTheWindow);
+            heightOfTheShape = calculationsForDrawing.definitionOfTheSmallestValue(heightOfTheShape, heightOfTheWindow/5)
             widthOfTheShape = calculationsForDrawing.calculatingTheWidthOfShape(widthOfTheWindow);
+            widthOfTheShape = calculationsForDrawing.definitionOfTheSmallestValue(widthOfTheShape, widthOfTheWindow/5)
+            let isHeightGreaterThanWidth = calculationsForDrawing.definitionOfTheLargerValue(heightOfTheShape, widthOfTheShape);
 
             let fontSizeValue: number = heightOfTheShape / 7;
 
@@ -303,8 +314,8 @@ module powerbi.extensibility.visual {
                         this.drawingRectangle(xCenterCoordinate, yCenterCoordinate, heightOfTheShape, widthOfTheShape, newModel, options, listTeams, color, numberOfVisibleLevels, newModel.dataPoints[i].lvl);
                         let offsetValue = fontSizeValue / 2;
                         let tempName = newModel.dataPoints[i].name.split(" ");
-                        this.drawingName(xCenterCoordinate, yCenterCoordinate, tempName, newModel, options, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels, newModel.dataPoints[i].lvl);
-                        this.drawingSurname(xCenterCoordinate, yCenterCoordinate, tempName, newModel, options, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels, newModel.dataPoints[i].lvl);
+                        this.drawingName(xCenterCoordinate, yCenterCoordinate, tempName, newModel, options, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels, newModel.dataPoints[i].lvl, isHeightGreaterThanWidth);
+                        this.drawingSurname(xCenterCoordinate, yCenterCoordinate, tempName, newModel, options, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels, newModel.dataPoints[i].lvl, isHeightGreaterThanWidth);
 
                         newModel.dataPoints[i].xCoordinate = xCenterCoordinate;
                         newModel.dataPoints[i].yCoordinate = yCenterCoordinate;
@@ -346,19 +357,32 @@ module powerbi.extensibility.visual {
                 })
         }
 
-        public drawingName(xCenterCoordinate, yCenterCoordinate, tempName, newModel, options, i, fontSizeValue, offsetValue, listTeams: TeamModelList, numberOfVisibleLevels, lvl) {
+        public drawingName(xCenterCoordinate, yCenterCoordinate, tempName, newModel, options, i, fontSizeValue, offsetValue, listTeams: TeamModelList, numberOfVisibleLevels, lvl, isHeightGreaterThanWidth) {
+            let writingMode;
+            let xCoordinate;
+            let yCoordinate;
+            if(isHeightGreaterThanWidth){
+                writingMode = "tb";
+                xCoordinate = xCenterCoordinate + offsetValue;
+                yCoordinate = yCenterCoordinate - fontSizeValue * 3.5;
+            }
+            else{
+                writingMode = "bt";
+                xCoordinate = xCenterCoordinate;
+                yCoordinate = yCenterCoordinate - fontSizeValue * 3.5 - offsetValue;
+            }
             Visual.nameTextValue = Visual.barGroup.append("text")
                 .classed("nameTextValue", true);
 
             Visual.nameTextValue
                 .text(tempName[0])
                 .attr({
-                    x: xCenterCoordinate + offsetValue,
-                    y: yCenterCoordinate - fontSizeValue * 3.5,
+                    x: xCoordinate,
+                    y: yCoordinate,
                     dy: "0.35em",
                     "text-anchor": "middle"
                 }).style("font-size", fontSizeValue + "px")
-                .style("writing-mode", "tb")
+                .style("writing-mode", writingMode)
                 .style("font-family", "cursive")
                 .on('click', () => {
                     if (lvl != 0)
@@ -366,7 +390,20 @@ module powerbi.extensibility.visual {
                 });
         }
 
-        public drawingSurname(xCenterCoordinate, yCenterCoordinate, tempName, newModel: ViewModel, options, i, fontSizeValue, offsetValue, listTeams: TeamModelList, numberOfVisibleLevels, lvl) {
+        public drawingSurname(xCenterCoordinate, yCenterCoordinate, tempName, newModel: ViewModel, options, i, fontSizeValue, offsetValue, listTeams: TeamModelList, numberOfVisibleLevels, lvl, isHeightGreaterThanWidth) {
+            let writingMode;
+            let xCoordinate;
+            let yCoordinate;
+            if(isHeightGreaterThanWidth){
+                writingMode = "tb";
+                xCoordinate = xCenterCoordinate - offsetValue;
+                yCoordinate = yCenterCoordinate - fontSizeValue * 3.5;
+            }
+            else{
+                writingMode = "bt";
+                xCoordinate = xCenterCoordinate ;
+                yCoordinate = yCenterCoordinate - fontSizeValue * 3.5 + offsetValue;
+            }
             Visual.surnameTextValue = Visual.barGroup.append("text")
                 .classed("surnameTextValue", true);
             let textValue = "";
@@ -376,12 +413,12 @@ module powerbi.extensibility.visual {
             Visual.surnameTextValue
                 .text(textValue + ", " + newModel.dataPoints[i].position)
                 .attr({
-                    x: xCenterCoordinate - offsetValue,
-                    y: yCenterCoordinate - fontSizeValue * 3.5,
+                    x: xCoordinate,
+                    y: yCoordinate,
                     dy: "0.35em",
                     "text-anchor": "middle"
                 }).style("font-size", fontSizeValue / 1.5 + "px")
-                .style("writing-mode", "tb")
+                .style("writing-mode", writingMode)
                 .style("font-family", "cursive")
                 .on('click', () => {
                     if (lvl != 0)
@@ -471,6 +508,26 @@ module powerbi.extensibility.visual {
 
     class CalculationsForDrawing {
 
+        public definitionOfTheSmallestValue(firstValue, secondValue): number
+        {
+            if(firstValue<secondValue){
+                return firstValue;
+            }
+            else{
+                return secondValue;
+            }
+        }
+
+        public definitionOfTheLargerValue(firstValue, secondValue): boolean
+        {
+            if(firstValue>secondValue){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+
         public calculatingTheWidthOfShape(widthOfTheWindow): number {
             let maxNumberOfElementsAtTheLevel = this.searchMaximumNumberOfElementsAtTheLevel();
             let widthOfTheShape: number = widthOfTheWindow / (maxNumberOfElementsAtTheLevel * 1.2);
@@ -479,7 +536,7 @@ module powerbi.extensibility.visual {
 
         public calculatingTheHeightOfShape(heightOfTheWindow): number {
             let maxNumberOfTheLevel = Visual.numberOfElementsAtTheLevelThatIsVisible.length;
-            let heightOfTheShape: number = heightOfTheWindow / (maxNumberOfTheLevel * 1.15);
+            let heightOfTheShape: number = heightOfTheWindow / (maxNumberOfTheLevel * 1.3);
             return heightOfTheShape;
         }
 
@@ -565,18 +622,14 @@ module powerbi.extensibility.visual {
                 nameOfTheParent = listNames[0];
                 listNames.splice(0, 1);
                 for (let i = 0; i < newModel.dataPoints.length; i++) {
-                    if (isVisible) {
-                        if (newModel.dataPoints[i].reportTo === nameOfTheParent) {
-                            newModel.dataPoints[i].isVisible = isVisible;
-                        }
-                    }
-                    else {
-                        if (newModel.dataPoints[i].reportTo === nameOfTheParent) {
-                            newModel.dataPoints[i].isVisible = isVisible;
+                     if (newModel.dataPoints[i].reportTo === nameOfTheParent)
+                     {
+                        if (!isVisible) {
                             listNames.push(newModel.dataPoints[i].name);
                         }
+                        newModel.dataPoints[i].isVisible = isVisible;
                     }
-                }
+                } 
             }
             while (listNames.length != 0);
             return newModel;
@@ -622,17 +675,10 @@ module powerbi.extensibility.visual {
                 position: ""
             };
             let cashPoint: DataPoint;
-
             let sortModel: ViewModel = {
                 dataPoints: []
             };
             let _lvl: number = 0;
-            let cashCount: number = 1;
-            let prevCount: number = 0;
-            let pushV: boolean = false;
-            let lvlUpReady: boolean = false;
-            let resCount: number = 0;
-
             let newViewModel: ViewModel = {
                 dataPoints: []
             };
@@ -669,9 +715,7 @@ module powerbi.extensibility.visual {
                 }
             }
             while (newViewModel.dataPoints.length != 1);
-
             Visual.numberOfLevels = _lvl - 2;
-
             return sortModel;
         }
 
