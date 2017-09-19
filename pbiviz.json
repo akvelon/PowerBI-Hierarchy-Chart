@@ -1,7 +1,7 @@
 {
   "visual": {
     "name": "chart",
-    "displayName": "chart",
+    "displayName": "Chart",
     "guid": "chart6F792A8745784877BCD8F4ACA5AD4207",
     "visualClassName": "Visual",
     "version": "1.0.0",
@@ -19,6 +19,8 @@
   },
   "externalJS": [
     "node_modules/powerbi-visuals-utils-dataviewutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-typeutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-colorutils/lib/index.js",
     "node_modules/d3/d3.min.js"
   ],
   "style": "style/visual.less",

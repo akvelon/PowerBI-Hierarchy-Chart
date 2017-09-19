@@ -25,24 +25,60 @@
  */
 
 module powerbi.extensibility.visual.chart6F792A8745784877BCD8F4ACA5AD4207  {
-    "use strict";
-    import DataViewObjectsParser = powerbi.extensibility.utils.dataview.DataViewObjectsParser;
+  "use strict";
+  import DataViewObjectsParser = powerbi.extensibility.utils.dataview.DataViewObjectsParser;
 
-    export class VisualSettings extends DataViewObjectsParser {
-      public dataPoint: dataPointSettings = new dataPointSettings();
-      }
+  export class VisualSettings extends DataViewObjectsParser {
+    public levels: levelsSettings = new levelsSettings();
+    public links: linksSettings = new linksSettings();
+    public nodes: nodesSettings = new nodesSettings();
+    public legend: legendSettings = new legendSettings();
+    public warning: warningSettings = new warningSettings();
+  }
+/*
+  export class dataPointSettings {
+    // Default color
+    public defaultColor: string = "";
+    // Show all
+    public showAllDataPoints: boolean = true;
+    // Fill
+    public fill: string = "";
+    // Color saturation
+    public fillRule: string = "";
+    // Text Size
+    public fontSize: number = 12;
+  }
+*/
+  export class levelsSettings{
+    public controls: boolean = true;
+    public isMaxDepth: boolean = false;
+    public maxDepth: number = 10;
+  }
 
-    export class dataPointSettings {
-     // Default color
-      public defaultColor: string = "";
-     // Show all
-      public showAllDataPoints: boolean = true;
-     // Fill
-      public fill: string = "";
-     // Color saturation
-      public fillRule: string = "";
-     // Text Size
-      public fontSize: number = 12;
-     }
+  export class linksSettings{
+    public color: string = "black";
+  }
+  export class nodesSettings{
+    public show: boolean = false;
+    public displayHeightAndWidth: boolean = false;
+    public height:  number = 100;
+    public width: number = 40;
+    public fontSize: number = 8;
+    public fontSubtitleSize: number = 8;
+    public colorName: string = "";
+    public distanceBetweenTitleAndSubtitle: number = 5;
+    public shape: boolean = false;
+  }
+ export class legendSettings{
+    public show: boolean = true;
+    public position: string = "0";
+    public showLegend: boolean = false;
+    public titleLegend: string = "";
+    public colorLegend: string = "black";
+    public fontSize: number = 8;
+  }
 
+  export class warningSettings{
+    public show: boolean = true;
+  }
 }
