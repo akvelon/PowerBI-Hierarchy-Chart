@@ -957,7 +957,7 @@ module powerbi.extensibility.visual.chart6F792A8745784877BCD8F4ACA5AD4207  {
                 .attr({
                     x: xCenterCoordinate,
                     y: yCenterCoordinate + 6,
-                    //dy: "0.35 em",
+                    //dy: "0.35em",
                     "text-anchor": "middle"
                 }).style("font-size", "19px")
 
