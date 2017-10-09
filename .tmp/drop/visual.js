@@ -3751,16 +3751,16 @@ var powerbi;
                             && options.dataViews
                             && options.dataViews[0]);
                         Visual.visualWindowWidth = options.viewport.width;
-                        Visual.VisualWindowHeight = options.viewport.height;
+                        Visual.visualWindowHeight = options.viewport.height;
                         Visual.colorName = this.settings.nodes.colorName;
                         Visual.displayHeightAndWidth = this.settings.nodes.displayHeightAndWidth;
-                        Visual.CustomShapeHeight = this.settings.nodes.height;
-                        Visual.CustomShapeWidth = this.settings.nodes.width;
+                        Visual.customShapeHeight = this.settings.nodes.height;
+                        Visual.customShapeWidth = this.settings.nodes.width;
                         Visual.linksColor = this.settings.links.color;
                         Visual.isControls = this.settings.levels.controls;
-                        Visual.CustomFontSizeTitleInShape = this.settings.nodes.fontSize;
-                        Visual.CustomFontSizeSubtitleInShape = this.settings.nodes.fontSubtitleSize;
-                        Visual.ShapeType = this.settings.nodes.shape;
+                        Visual.customFontSizeTitleInShape = this.settings.nodes.fontSize;
+                        Visual.customFontSizeSubtitleInShape = this.settings.nodes.fontSubtitleSize;
+                        Visual.shapeType = this.settings.nodes.shape;
                         Visual.distanceBetweenTitleAndSubtitle = this.settings.nodes.distanceBetweenTitleAndSubtitle;
                         Visual.legend = this.settings.legend.position;
                         Visual.colorLegend = this.settings.legend.colorLegend;
@@ -3784,7 +3784,8 @@ var powerbi;
                             }
                         }
                         var modelWithLevels = calculationsForDrawing.findLevels(viewModel);
-                        if (viewModel.dataPoints.length != modelWithLevels.dataPoints.length) {
+                        workWithWarning.searchForSimilarId(viewModel);
+                        if ((viewModel.dataPoints.length != modelWithLevels.dataPoints.length) || (Visual.sameId)) {
                             workWithWarning.handlingOfWarnings(viewModel, modelWithLevels);
                         }
                         calculationsForDrawing.searchOfHeirs(modelWithLevels);
@@ -3801,26 +3802,26 @@ var powerbi;
                         modelWithVisibleElements = calculationsForDrawing.calculationOfWeightingCoefficients(modelWithVisibleElements);
                         if (Visual.displayHeightAndWidth) {
                             Visual.divOuter.style("overflow", "auto");
-                            if ((Visual.CustomShapeHeight > 0) && (Visual.CustomShapeWidth > 0)) {
-                                Visual.VisualWindowHeight = (Visual.CustomShapeHeight + Visual.CustomShapeHeight / 1.3) * Visual.numberOfLevelsThatIsVisible;
+                            if ((Visual.customShapeHeight > 0) && (Visual.customShapeWidth > 0)) {
+                                Visual.visualWindowHeight = (Visual.customShapeHeight + Visual.customShapeHeight / 1.3) * Visual.numberOfLevelsThatIsVisible;
                                 if ((Visual.showWarning) && (Visual.isWarning)) {
-                                    Visual.VisualWindowHeight = Visual.VisualWindowHeight;
+                                    Visual.visualWindowHeight = Visual.visualWindowHeight + 100;
                                 }
-                                Visual.visualWindowWidth = Visual.CustomShapeWidth * 1.3 * Visual.maximumElementWeight;
+                                Visual.visualWindowWidth = Visual.customShapeWidth * 1.3 * Visual.maximumElementWeight;
                             }
                             else {
                                 Visual.displayHeightAndWidth = false;
                             }
                         }
                         Visual.visualWindowWidth = Visual.visualWindowWidth - 25;
-                        Visual.VisualWindowHeight = Visual.VisualWindowHeight - 25;
+                        Visual.visualWindowHeight = Visual.visualWindowHeight - 25;
                         var minWindowHeight = 130;
                         if ((Visual.showWarning) && (Visual.isWarning)) {
-                            Visual.VisualWindowHeight = Visual.VisualWindowHeight;
+                            Visual.visualWindowHeight = Visual.visualWindowHeight;
                             minWindowHeight = 180;
                         }
                         var heightOfTheShape = 0;
-                        if (options.viewport.height > minWindowHeight) {
+                        if ((options.viewport.height > minWindowHeight) && (!Visual.criticalError)) {
                             heightOfTheShape = drawElements.drawingElements(options, modelWithVisibleElements, listTeams, numberOfVisibleLevels);
                             drawElements.drawingRelationships(modelWithVisibleElements, heightOfTheShape);
                         }
@@ -3907,21 +3908,23 @@ var powerbi;
                             var xCoordinate = 0;
                             var yCoordinate = 0;
                             var isVisible = false;
-                            var team = " ";
-                            var position = " ";
+                            var team = "";
+                            var position = "";
                             if (categories[columnIndexes.position] == undefined) {
-                                position = " ";
+                                position = "";
                             }
                             else {
                                 position = categories[columnIndexes.position].values[dataPointIndex];
                             }
                             if (categories[columnIndexes.team] == undefined) {
-                                team = " ";
+                                team = "";
                             }
                             else {
                                 team = categories[columnIndexes.team].values[dataPointIndex];
                             }
+                            //console.log(id, title, position, reportTo, team);
                             var teamId = 0;
+                            var boolSelectionIds = false;
                             var isHeirs = false;
                             var elementWeight = 0;
                             var parentStartX = 0;
@@ -3929,15 +3932,20 @@ var powerbi;
                             var selectionId = this.host.createSelectionIdBuilder()
                                 .withCategory(categories[columnIndexes.category], dataPointIndex)
                                 .createSelectionId();
+                            var boolSelectionId = false;
+                            if (((team == " ") || (team == null) || (team == "")) && (columnIndexes.team != -1)) {
+                                team = "Fill";
+                            }
                             if (!viewModel.teamSet[team]) {
-                                var color = this.getColor(Visual.TeamsColorIdentifier, Visual.DefaultColor, categories[columnIndexes.category].objects
+                                var color = this.getColor(Visual.TeamsColorIdentifier, Visual.defaultColor, categories[columnIndexes.category].objects
                                     && categories[columnIndexes.category].objects[dataPointIndex]
                                     || {});
                                 viewModel.teamSet[team] = {
                                     team: team,
                                     selectionIds: [selectionId],
                                     color: color,
-                                    teamId: teamId
+                                    teamId: teamId,
+                                    boolSelectionIds: boolSelectionIds
                                 };
                             }
                             else {
@@ -3954,6 +3962,7 @@ var powerbi;
                                 team: team,
                                 position: position,
                                 selectionId: selectionId,
+                                boolSelectionId: boolSelectionId,
                                 teamId: teamId,
                                 highlighted: highlighted,
                                 isHeirs: isHeirs,
@@ -3970,34 +3979,36 @@ var powerbi;
                 Visual.isDependenciesVisible = false;
                 Visual.isExternalEventClick = false;
                 Visual.maximumElementWeight = 0;
+                Visual.criticalError = false;
+                Visual.sameId = false;
                 Visual.TeamsColorIdentifier = {
                     objectName: "teams",
                     propertyName: "fill"
                 };
                 //User(Custom) settings
-                Visual.DefaultColor = "green";
+                Visual.defaultColor = "green";
                 Visual.isControls = true;
                 chart6F792A8745784877BCD8F4ACA5AD4207.Visual = Visual;
                 var DrawControlPanel = (function () {
                     function DrawControlPanel() {
                     }
                     DrawControlPanel.prototype.drawingControlPanel = function (options, newModel, listTeams, heightOfTheShape, numberOfVisibleLevels) {
-                        if ((Visual.isControls) && (options.viewport.height > 130)) {
+                        if ((Visual.isControls) && (options.viewport.height > 130) && (!Visual.criticalError)) {
                             this.drawingControlButtons(options, heightOfTheShape, newModel, numberOfVisibleLevels, listTeams);
                         }
-                        if (Visual.showLegend) {
+                        if ((Visual.showLegend) && (!Visual.criticalError)) {
                             if (Visual.legend == "0") {
                                 this.drawingMarks(options, listTeams, heightOfTheShape, newModel, true);
                                 if (DrawControlPanel.displayScroll) {
-                                    this.scrollButtonLeft(options, newModel, listTeams, heightOfTheShape, numberOfVisibleLevels, true);
-                                    this.scrollButtonRight(options, newModel, listTeams, heightOfTheShape, numberOfVisibleLevels, true);
+                                    this.scrollButtonLeft(options, newModel, listTeams, heightOfTheShape, numberOfVisibleLevels, true, newModel);
+                                    this.scrollButtonRight(options, newModel, listTeams, heightOfTheShape, numberOfVisibleLevels, true, newModel);
                                 }
                             }
                             if (Visual.legend == "1") {
                                 this.drawingMarks(options, listTeams, heightOfTheShape, newModel, false);
                                 if (DrawControlPanel.displayScroll) {
-                                    this.scrollButtonLeft(options, newModel, listTeams, heightOfTheShape, numberOfVisibleLevels, false);
-                                    this.scrollButtonRight(options, newModel, listTeams, heightOfTheShape, numberOfVisibleLevels, false);
+                                    this.scrollButtonLeft(options, newModel, listTeams, heightOfTheShape, numberOfVisibleLevels, false, newModel);
+                                    this.scrollButtonRight(options, newModel, listTeams, heightOfTheShape, numberOfVisibleLevels, false, newModel);
                                 }
                             }
                             if (Visual.legend == "2") {
@@ -4013,7 +4024,7 @@ var powerbi;
                         var xButtonCoordinateAdd = newModel.dataPoints[0].xCoordinate - Visual.widthOfTheShape / 1.1;
                         var xButtonCoordinateMinus = newModel.dataPoints[0].xCoordinate + Visual.widthOfTheShape / 1.1;
                         if (Visual.displayHeightAndWidth) {
-                            heightOfTheShape = Visual.CustomShapeHeight;
+                            heightOfTheShape = Visual.customShapeHeight;
                         }
                         var yButtonCoordinate = newModel.dataPoints[0].yCoordinate - heightOfTheShape / 1.2;
                         this.drowingButton(options, yButtonCoordinate, xButtonCoordinateAdd, newModel, numberOfVisibleLevels, listTeams, true, "+");
@@ -4044,7 +4055,7 @@ var powerbi;
                             }
                         }
                         else {
-                            if (numberOfVisibleLevels + 1 > 1) {
+                            if (numberOfVisibleLevels + 2 > 1) {
                                 numberOfVisibleLevels = numberOfVisibleLevels - 1;
                             }
                         }
@@ -4060,7 +4071,7 @@ var powerbi;
                         drawElements.drawingRelationships(modelWithVisibleElements, heightOfTheShape);
                         this.drawingControlPanel(options, modelWithVisibleElements, listTeams, heightOfTheShape, numberOfVisibleLevels);
                     };
-                    DrawControlPanel.prototype.scrollButtonLeft = function (options, modelWithVisibleElements, listTeams, heightOfTheShape, numberOfVisibleLevels, isBottom) {
+                    DrawControlPanel.prototype.scrollButtonLeft = function (options, modelWithVisibleElements, listTeams, heightOfTheShape, numberOfVisibleLevels, isBottom, newModel) {
                         var _this = this;
                         Visual.nameTextValue = Visual.barGroup.append("text")
                             .classed("nameTextValue", true);
@@ -4069,7 +4080,7 @@ var powerbi;
                             yCoordinate = 5 + 6 * Visual.fontLegendSize / 10;
                         }
                         else {
-                            yCoordinate = Visual.VisualWindowHeight - 6 * Visual.fontLegendSize / 10 - 45;
+                            yCoordinate = Visual.visualWindowHeight - 6 * Visual.fontLegendSize / 10 - 45;
                         }
                         if ((Visual.showWarning) && (Visual.isWarning)) {
                             yCoordinate = yCoordinate + 40;
@@ -4104,27 +4115,27 @@ var powerbi;
                                     yCircleCoordinate = 5 + 6 * Visual.fontLegendSize / 10;
                                 }
                                 else {
-                                    yCircleCoordinate = Visual.VisualWindowHeight - 6 * Visual.fontLegendSize / 10 - 45;
+                                    yCircleCoordinate = Visual.visualWindowHeight - 6 * Visual.fontLegendSize / 10 - 45;
                                 }
                                 if ((Visual.showWarning) && (Visual.isWarning)) {
                                     yCircleCoordinate = yCircleCoordinate + 40;
                                 }
-                                var isTransparent = false;
                                 for (var i = Visual.scrollLeft; i < Visual.scrollRight; i++) {
-                                    if ((listTeams.teamModel[i].team != null) && (listTeams.teamModel[i].team != "") && (listTeams.teamModel[i].team != " ")) {
+                                    if ((listTeams.teamModel[i].team != null) && (listTeams.teamModel[i].team != " ") && (listTeams.teamModel[i].team != "")) {
                                         var color = listTeams.teamModel[i].color;
                                         if (i < listTeams.teamModel.length) {
-                                            _this.drawingColorMarks(options, xCoordinate, yCircleCoordinate, radius, color, listTeams, i, isTransparent);
+                                            _this.drawingColorMarks(options, xCoordinate, yCircleCoordinate, radius, color, listTeams, i, newModel);
                                             xCoordinate = xCoordinate + radius * 2;
-                                            _this.drawingTextMarks(options, xCoordinate, yCircleCoordinate, listTeams.teamModel[i].team, radius, false);
-                                            xCoordinate = xCoordinate + listTeams.teamModel[i].team.length * 4 * Visual.fontLegendSize / 5;
+                                            var team = listTeams.teamModel[i].team.toString();
+                                            _this.drawingTextMarks(options, xCoordinate, yCircleCoordinate, team, radius, false, listTeams, i, newModel);
+                                            xCoordinate = xCoordinate + team.length * 4 * Visual.fontLegendSize / 5 + 7;
                                         }
                                     }
                                 }
                             }
                         });
                     };
-                    DrawControlPanel.prototype.scrollButtonRight = function (options, modelWithVisibleElements, listTeams, heightOfTheShape, numberOfVisibleLevels, isBottom) {
+                    DrawControlPanel.prototype.scrollButtonRight = function (options, modelWithVisibleElements, listTeams, heightOfTheShape, numberOfVisibleLevels, isBottom, newModel) {
                         var _this = this;
                         Visual.nameTextValue = Visual.barGroup.append("text")
                             .classed("nameTextValue", true);
@@ -4133,7 +4144,7 @@ var powerbi;
                             yCoordinate = 5 + 6 * Visual.fontLegendSize / 10;
                         }
                         else {
-                            yCoordinate = Visual.VisualWindowHeight - 6 * Visual.fontLegendSize / 10 - 45;
+                            yCoordinate = Visual.visualWindowHeight - 6 * Visual.fontLegendSize / 10 - 45;
                         }
                         if ((Visual.showWarning) && (Visual.isWarning)) {
                             yCoordinate = yCoordinate + 40;
@@ -4164,20 +4175,20 @@ var powerbi;
                                     yCircleCoordinate = 5 + 6 * Visual.fontLegendSize / 10;
                                 }
                                 else {
-                                    yCircleCoordinate = Visual.VisualWindowHeight - 6 * Visual.fontLegendSize / 10 - 45;
+                                    yCircleCoordinate = Visual.visualWindowHeight - 6 * Visual.fontLegendSize / 10 - 45;
                                 }
                                 if ((Visual.showWarning) && (Visual.isWarning)) {
                                     yCircleCoordinate = yCircleCoordinate + 40;
                                 }
-                                var isTransparent = false;
                                 for (var i = Visual.scrollLeft; i < Visual.scrollRight; i++) {
-                                    if ((listTeams.teamModel[i].team != null) && (listTeams.teamModel[i].team != "") && (listTeams.teamModel[i].team != " ")) {
+                                    if ((listTeams.teamModel[i].team != null) && (listTeams.teamModel[i].team != " ") && (listTeams.teamModel[i].team != "")) {
                                         var color = listTeams.teamModel[i].color;
                                         if (i < listTeams.teamModel.length) {
-                                            _this.drawingColorMarks(options, xCoordinate, yCircleCoordinate, radius, color, listTeams, i, isTransparent);
+                                            _this.drawingColorMarks(options, xCoordinate, yCircleCoordinate, radius, color, listTeams, i, newModel);
                                             xCoordinate = xCoordinate + radius * 2;
-                                            _this.drawingTextMarks(options, xCoordinate, yCircleCoordinate, listTeams.teamModel[i].team, radius, false);
-                                            xCoordinate = xCoordinate + listTeams.teamModel[i].team.length * 4 * Visual.fontLegendSize / 5;
+                                            var team = listTeams.teamModel[i].team.toString();
+                                            _this.drawingTextMarks(options, xCoordinate, yCircleCoordinate, team, radius, false, listTeams, i, newModel);
+                                            xCoordinate = xCoordinate + team.length * 4 * Visual.fontLegendSize / 5 + 7;
                                         }
                                     }
                                 }
@@ -4194,18 +4205,17 @@ var powerbi;
                             yCircleCoordinateForTheSecondHalf = yCircleCoordinateForTheSecondHalf + 40;
                             yCircleCoordinate = yCircleCoordinate + 40;
                         }
-                        var isTransparent = false;
                         for (var i = 0; i < listTeams.teamModel.length; i++) {
-                            if ((listTeams.teamModel[i].team != null) && (listTeams.teamModel[i].team != "") && (listTeams.teamModel[i].team != " ")) {
+                            if ((listTeams.teamModel[i].team != null) && (listTeams.teamModel[i].team != " ") && (listTeams.teamModel[i].team != "")) {
                                 var color = listTeams.teamModel[i].color;
                                 if (i < (listTeams.teamModel.length / 2)) {
-                                    this.drawingColorMarks(options, xCircleCoordinate, yCircleCoordinate, radius, color, listTeams, i, isTransparent);
+                                    this.drawingColorMarks(options, xCircleCoordinate, yCircleCoordinate, radius, color, listTeams, i, newModel);
                                     this.drawingTextMarksAuto(options, xCircleCoordinate + radius * 2, yCircleCoordinate, listTeams.teamModel[i].team, radius, true);
                                     yCircleCoordinate = yCircleCoordinate + radius * 2.5;
                                 }
                                 else {
                                     xCircleCoordinate = widthWindow - radius * 1.2;
-                                    this.drawingColorMarks(options, xCircleCoordinate, yCircleCoordinateForTheSecondHalf, radius, color, listTeams, i, isTransparent);
+                                    this.drawingColorMarks(options, xCircleCoordinate, yCircleCoordinateForTheSecondHalf, radius, color, listTeams, i, newModel);
                                     this.drawingTextMarksAuto(options, Visual.visualWindowWidth - radius * 3, yCircleCoordinateForTheSecondHalf, listTeams.teamModel[i].team, radius, false);
                                     yCircleCoordinateForTheSecondHalf = yCircleCoordinateForTheSecondHalf + radius * 2.5;
                                 }
@@ -4221,26 +4231,26 @@ var powerbi;
                             yCircleCoordinate = 5 + radius * 1.2 * Visual.fontLegendSize / 10;
                         }
                         else {
-                            yCircleCoordinate = Visual.VisualWindowHeight - radius * 1.2 * Visual.fontLegendSize / 10 - 45;
+                            yCircleCoordinate = Visual.visualWindowHeight - radius * 1.2 * Visual.fontLegendSize / 10 - 45;
                         }
                         if ((Visual.showWarning) && (Visual.isWarning)) {
                             yCircleCoordinate = yCircleCoordinate + 40;
                         }
                         if (Visual.showLegendTitle) {
-                            this.drawingTextMarks(options, xCoordinate, yCircleCoordinate, Visual.titleLegend, radius, true);
+                            this.drawingTextMarks(options, xCoordinate, yCircleCoordinate, Visual.titleLegend, radius, true, listTeams, 0, newModel);
                             xCoordinate = xCoordinate + Visual.titleLegend.length * 6 * Visual.fontLegendSize / 5;
                             DrawControlPanel.xStartCoordinate = xCoordinate;
                         }
-                        var isTransparent = false;
                         DrawControlPanel.displayScroll = false;
                         for (var i = Visual.scrollLeft; i < Visual.scrollRight; i++) {
-                            if ((listTeams.teamModel[i].team != null) && (listTeams.teamModel[i].team != "") && (listTeams.teamModel[i].team != " ")) {
+                            if ((listTeams.teamModel[i].team != null) && (listTeams.teamModel[i].team != " ") && (listTeams.teamModel[i].team != "")) {
                                 var color = listTeams.teamModel[i].color;
                                 if (i < listTeams.teamModel.length) {
-                                    this.drawingColorMarks(options, xCoordinate, yCircleCoordinate, radius, color, listTeams, i, isTransparent);
+                                    this.drawingColorMarks(options, xCoordinate, yCircleCoordinate, radius, color, listTeams, i, newModel);
                                     xCoordinate = xCoordinate + radius * 2;
-                                    this.drawingTextMarks(options, xCoordinate, yCircleCoordinate, listTeams.teamModel[i].team, radius, false);
-                                    xCoordinate = xCoordinate + listTeams.teamModel[i].team.length * 4 * Visual.fontLegendSize / 5;
+                                    var team = listTeams.teamModel[i].team.toString();
+                                    this.drawingTextMarks(options, xCoordinate, yCircleCoordinate, team, radius, false, listTeams, i, newModel);
+                                    xCoordinate = xCoordinate + team.length * 4 * Visual.fontLegendSize / 5 + 7;
                                 }
                                 if ((xCoordinate < Visual.visualWindowWidth - 50) && (Visual.scrollRight < listTeams.teamModel.length)) {
                                     Visual.scrollRight++;
@@ -4257,7 +4267,8 @@ var powerbi;
                         }
                         Visual.scrollRight--;
                     };
-                    DrawControlPanel.prototype.drawingColorMarks = function (options, xCircleCoordinate, yCircleCoordinate, radius, color, listTeams, i, isTransparent) {
+                    DrawControlPanel.prototype.drawingColorMarks = function (options, xCircleCoordinate, yCircleCoordinate, radius, color, listTeams, i, newModel) {
+                        var _this = this;
                         Visual.circle = Visual.barGroup.append("circle")
                             .classed('circle', true).classed("team" + listTeams.teamModel[i].teamId, true).classed("controlPanel", true);
                         Visual.circle
@@ -4270,34 +4281,52 @@ var powerbi;
                             cy: yCircleCoordinate
                         })
                             .on('click', function () {
-                            Visual.selectionManager.clear();
-                            if (!isTransparent) {
+                            if (listTeams.teamModel[i].boolSelectionIds) {
+                                listTeams.teamModel[i].boolSelectionIds = false;
+                            }
+                            else {
+                                listTeams.teamModel[i].boolSelectionIds = true;
+                            }
+                            if (_this.determinationOfBoolSelectionIdTeam(listTeams)) {
                                 Visual.barGroup
                                     .selectAll(".rectangle")
                                     .style('opacity', 0.5);
                                 Visual.barGroup
                                     .selectAll(".circle")
                                     .style('opacity', 0.5);
-                                Visual.barGroup
-                                    .selectAll(".team" + listTeams.teamModel[i].teamId)
-                                    .style('opacity', 1);
+                                for (var j = 0; j < listTeams.teamModel.length; j++) {
+                                    if (listTeams.teamModel[j].boolSelectionIds) {
+                                        Visual.barGroup
+                                            .selectAll(".team" + listTeams.teamModel[j].teamId)
+                                            .style('opacity', 1);
+                                    }
+                                }
                                 listTeams.teamModel[i].selectionIds.forEach(function (selectionId) {
                                     Visual.selectionManager.select(selectionId, true);
                                 });
-                                isTransparent = true;
                             }
                             else {
+                                Visual.selectionManager.clear();
                                 Visual.barGroup
                                     .selectAll(".rectangle")
                                     .style('opacity', 1);
                                 Visual.barGroup
                                     .selectAll(".circle")
                                     .style('opacity', 1);
-                                isTransparent = false;
                             }
                         });
                     };
-                    DrawControlPanel.prototype.drawingTextMarks = function (options, xCircleCoordinate, yCircleCoordinate, team, radius, isHeading) {
+                    DrawControlPanel.prototype.determinationOfBoolSelectionIdTeam = function (listTeams) {
+                        var isSelectedTeam = false;
+                        for (var i = 0; i < listTeams.teamModel.length; i++) {
+                            if (listTeams.teamModel[i].boolSelectionIds) {
+                                isSelectedTeam = true;
+                            }
+                        }
+                        return isSelectedTeam;
+                    };
+                    DrawControlPanel.prototype.drawingTextMarks = function (options, xCircleCoordinate, yCircleCoordinate, team, radius, isHeading, listTeams, i, newModel) {
+                        var _this = this;
                         var calculationsForDrawing = new CalculationsForDrawing();
                         CalculationsForDrawing;
                         var fontSize = calculationsForDrawing.definitionOfTheSmallestValue(radius * 2.5, Visual.visualWindowWidth / 60);
@@ -4320,7 +4349,42 @@ var powerbi;
                             .style("fill", Visual.colorLegend)
                             .style("opacity ", "0.9")
                             .style("position", "relative")
-                            .style("text-align", "left");
+                            .style("text-align", "left")
+                            .on('click', function () {
+                            if (listTeams.teamModel[i].boolSelectionIds) {
+                                listTeams.teamModel[i].boolSelectionIds = false;
+                            }
+                            else {
+                                listTeams.teamModel[i].boolSelectionIds = true;
+                            }
+                            if (_this.determinationOfBoolSelectionIdTeam(listTeams)) {
+                                Visual.barGroup
+                                    .selectAll(".rectangle")
+                                    .style('opacity', 0.5);
+                                Visual.barGroup
+                                    .selectAll(".circle")
+                                    .style('opacity', 0.5);
+                                for (var j = 0; j < listTeams.teamModel.length; j++) {
+                                    if (listTeams.teamModel[j].boolSelectionIds) {
+                                        Visual.barGroup
+                                            .selectAll(".team" + listTeams.teamModel[j].teamId)
+                                            .style('opacity', 1);
+                                    }
+                                }
+                                listTeams.teamModel[i].selectionIds.forEach(function (selectionId) {
+                                    Visual.selectionManager.select(selectionId, true);
+                                });
+                            }
+                            else {
+                                Visual.selectionManager.clear();
+                                Visual.barGroup
+                                    .selectAll(".rectangle")
+                                    .style('opacity', 1);
+                                Visual.barGroup
+                                    .selectAll(".circle")
+                                    .style('opacity', 1);
+                            }
+                        });
                     };
                     DrawControlPanel.prototype.drawingTextMarksAuto = function (options, xCircleCoordinate, yCircleCoordinate, team, radius, position) {
                         var textAnchor;
@@ -4356,11 +4420,11 @@ var powerbi;
                     DrawElements.prototype.drawingElements = function (options, newModel, listTeams, numberOfVisibleLevels) {
                         Visual.svg.attr({
                             width: Visual.visualWindowWidth,
-                            height: Visual.VisualWindowHeight
+                            height: Visual.visualWindowHeight
                         });
                         var widthOfTheShape = 0;
                         var heightOfTheShape = 0;
-                        var windowHeight = Visual.VisualWindowHeight - 100;
+                        var windowHeight = Visual.visualWindowHeight - 100;
                         var calculationsForDrawing = new CalculationsForDrawing();
                         heightOfTheShape = calculationsForDrawing.calculatingTheHeightOfShape(windowHeight);
                         heightOfTheShape = calculationsForDrawing.definitionOfTheSmallestValue(heightOfTheShape, windowHeight / 5);
@@ -4368,8 +4432,8 @@ var powerbi;
                         widthOfTheShape = calculationsForDrawing.definitionOfTheSmallestValue(widthOfTheShape, Visual.visualWindowWidth / 5);
                         var isHeightGreaterThanWidth = calculationsForDrawing.definitionOfTheLargerValue(heightOfTheShape, widthOfTheShape);
                         if (Visual.displayHeightAndWidth) {
-                            heightOfTheShape = Visual.CustomShapeHeight;
-                            widthOfTheShape = Visual.CustomShapeWidth;
+                            heightOfTheShape = Visual.customShapeHeight;
+                            widthOfTheShape = Visual.customShapeWidth;
                         }
                         Visual.widthOfTheShape = widthOfTheShape;
                         var fontSizeValue = heightOfTheShape / 7;
@@ -4405,12 +4469,17 @@ var powerbi;
                                         }
                                     }
                                     newModel.dataPoints[i].parentStartX = xCenterCoordinate + predAdd;
-                                    xAddValueCoordinate = ((minX + gapWidth) * newModel.dataPoints[i].elementWeight) / 2;
+                                    if (((parent == " ") || (parent == "")) && (Visual.numberOfLevelsThatIsVisible == 1)) {
+                                        xAddValueCoordinate = Visual.visualWindowWidth / 2;
+                                    }
+                                    else {
+                                        xAddValueCoordinate = ((minX + gapWidth) * newModel.dataPoints[i].elementWeight) / 2;
+                                    }
                                     xCenterCoordinate = predAdd + xCenterCoordinate + xAddValueCoordinate;
                                     predAdd = xAddValueCoordinate;
                                     oldParent = parent;
                                     var color = calculationsForDrawing.colorDefinitionByCommand(newModel, i, listTeams);
-                                    if (Visual.ShapeType) {
+                                    if (Visual.shapeType) {
                                         this.drawingEllipse(xCenterCoordinate, yCenterCoordinate, heightOfTheShape, widthOfTheShape, newModel, options, listTeams, color, numberOfVisibleLevels, newModel.dataPoints[i].lvl, i);
                                     }
                                     else {
@@ -4444,23 +4513,25 @@ var powerbi;
                         var workWithTeams = new WorkWithTeams();
                         var teamId = workWithTeams.joiningPersonsWithTeamId(newModel.dataPoints[i].team, listTeams);
                         var transparency = 1;
-                        if (Visual.isExternalEventClick) {
+                        var isSelectedElements = this.determinationOfBoolSelectionId(newModel);
+                        if ((Visual.isExternalEventClick) || (isSelectedElements)) {
                             transparency = 0.5;
                         }
+                        if (newModel.dataPoints[i].boolSelectionId) {
+                            transparency = 1;
+                        }
                         Visual.circle = Visual.barGroup.append("circle")
-                            .classed('circle', true).classed("team" + teamId, true);
+                            .classed('circle', true).classed("team" + teamId, true).classed("id" + newModel.dataPoints[i].id, true);
                         var value = "+";
                         for (var j = 0; j < newModel.dataPoints.length; j++) {
                             if ((newModel.dataPoints[j].reportTo == newModel.dataPoints[i].id) && (newModel.dataPoints[j].isVisible)) {
                                 value = "-";
                             }
                         }
-                        if (newModel.dataPoints[i].reportTo == " ") {
-                            value = " ";
-                        }
                         Visual.circle
                             .style("fill", color)
                             .style("stroke", "black")
+                            .style("opacity", transparency)
                             .style("stroke-width", 1)
                             .attr({
                             r: 6,
@@ -4469,9 +4540,7 @@ var powerbi;
                         })
                             .on('click', function () {
                             var nameOfTheParent = calculationsForDrawing.nameDeterminationByCoordinates(newModel, tempxCenterCoordinate, tempyCenterCoordinate);
-                            if (lvl != 0) {
-                                _this.clickEvent(newModel, options, nameOfTheParent, listTeams, numberOfVisibleLevels, i);
-                            }
+                            _this.clickEvent(newModel, options, nameOfTheParent, listTeams, numberOfVisibleLevels, i);
                         });
                         Visual.nameTextValue = Visual.barGroup.append("text")
                             .classed("nameTextValue", true);
@@ -4480,16 +4549,13 @@ var powerbi;
                             .attr({
                             x: xCenterCoordinate,
                             y: yCenterCoordinate + 6,
-                            //dy: "0.35em",
                             "text-anchor": "middle"
                         }).style("font-size", "19px")
                             .on('click', function () {
                             var nameOfTheParent = calculationsForDrawing.nameDeterminationByCoordinates(newModel, tempxCenterCoordinate, tempyCenterCoordinate);
-                            if (lvl != 0) {
-                                _this.clickEvent(newModel, options, nameOfTheParent, listTeams, numberOfVisibleLevels, i);
-                            }
+                            _this.clickEvent(newModel, options, nameOfTheParent, listTeams, numberOfVisibleLevels, i);
                         });
-                        if (newModel.dataPoints[i].highlighted) {
+                        if ((newModel.dataPoints[i].highlighted) || (newModel.dataPoints[i].boolSelectionId)) {
                             Visual.rectangle.style("opacity", 1);
                         }
                     };
@@ -4501,11 +4567,18 @@ var powerbi;
                         var workWithTeams = new WorkWithTeams();
                         var teamId = workWithTeams.joiningPersonsWithTeamId(newModel.dataPoints[i].team, listTeams);
                         var transparency = 1;
-                        if (Visual.isExternalEventClick) {
+                        var isSelectedElements = this.determinationOfBoolSelectionId(newModel);
+                        if ((Visual.isExternalEventClick) || (isSelectedElements)) {
                             transparency = 0.5;
+                            Visual.barGroup
+                                .selectAll(".circle")
+                                .style('opacity', 0.5);
+                            Visual.barGroup
+                                .selectAll(".id" + newModel.dataPoints[i].id)
+                                .style('opacity', 1);
                         }
                         Visual.rectangle = Visual.barGroup.append("ellipse")
-                            .classed('rectangle', true).classed("team" + teamId, true);
+                            .classed('rectangle', true).classed("team" + teamId, true).classed("id" + newModel.dataPoints[i].id, true);
                         Visual.rectangle
                             .style("fill", color)
                             .style("opacity", transparency)
@@ -4518,14 +4591,20 @@ var powerbi;
                             ry: heightOfTheShape / 2
                         })
                             .on('click', function () {
-                            var nameOfTheParent = calculationsForDrawing.nameDeterminationByCoordinates(newModel, tempxCenterCoordinate, tempyCenterCoordinate);
-                            if (lvl != 0) {
-                                _this.clickEvent(newModel, options, nameOfTheParent, listTeams, numberOfVisibleLevels, i);
-                            }
+                            _this.selectEvent(newModel, i);
                         });
-                        if (newModel.dataPoints[i].highlighted) {
+                        if ((newModel.dataPoints[i].highlighted) || (newModel.dataPoints[i].boolSelectionId)) {
                             Visual.rectangle.style("opacity", 1);
                         }
+                    };
+                    DrawElements.prototype.determinationOfBoolSelectionId = function (newModel) {
+                        var isSelectedElements = false;
+                        for (var i = 0; i < newModel.dataPoints.length; i++) {
+                            if (newModel.dataPoints[i].boolSelectionId) {
+                                isSelectedElements = true;
+                            }
+                        }
+                        return isSelectedElements;
                     };
                     DrawElements.prototype.drawingRectangle = function (xCenterCoordinate, yCenterCoordinate, heightOfTheShape, widthOfTheShape, newModel, options, listTeams, color, numberOfVisibleLevels, lvl, i) {
                         var _this = this;
@@ -4535,30 +4614,39 @@ var powerbi;
                         var workWithTeams = new WorkWithTeams();
                         var teamId = workWithTeams.joiningPersonsWithTeamId(newModel.dataPoints[i].team, listTeams);
                         var transparency = 1;
-                        if (Visual.isExternalEventClick) {
+                        var isSelectedElements = this.determinationOfBoolSelectionId(newModel);
+                        if ((Visual.isExternalEventClick) || (isSelectedElements)) {
                             transparency = 0.5;
+                            Visual.barGroup
+                                .selectAll(".circle")
+                                .style('opacity', 0.5);
+                            Visual.barGroup
+                                .selectAll(".id" + newModel.dataPoints[i].id)
+                                .style('opacity', 1);
                         }
                         Visual.rectangle = Visual.barGroup.append("rect")
-                            .classed('rectangle', true).classed("team" + teamId, true);
+                            .classed('rectangle', true).classed("team" + teamId, true).classed("id" + newModel.dataPoints[i].id, true);
                         Visual.rectangle
                             .style("fill", color)
                             .style("opacity", transparency)
                             .style("stroke", "black")
                             .style("stroke-width", 2)
                             .attr({
-                            rx: 6,
+                            //rx: 6,
                             x: xCenterCoordinate - widthOfTheShape / 2,
                             y: yCenterCoordinate - heightOfTheShape,
                             width: widthOfTheShape,
                             height: heightOfTheShape
                         })
                             .on('click', function () {
-                            var nameOfTheParent = calculationsForDrawing.nameDeterminationByCoordinates(newModel, tempxCenterCoordinate, tempyCenterCoordinate);
-                            if (lvl != 0) {
-                                _this.clickEvent(newModel, options, nameOfTheParent, listTeams, numberOfVisibleLevels, i);
+                            /*
+                            if () {
+                                console.log("mama");
                             }
+                            */
+                            _this.selectEvent(newModel, i);
                         });
-                        if (newModel.dataPoints[i].highlighted) {
+                        if ((newModel.dataPoints[i].highlighted) || (newModel.dataPoints[i].boolSelectionId)) {
                             Visual.rectangle.style("opacity", 1);
                         }
                     };
@@ -4586,13 +4674,11 @@ var powerbi;
                             y: yCoordinate,
                             //dy: "0.35 em",
                             "text-anchor": "middle"
-                        }).style("font-size", Visual.CustomFontSizeTitleInShape + "px")
+                        }).style("font-size", Visual.customFontSizeTitleInShape + "px")
                             .style("fill", Visual.colorName)
                             .style("writing-mode", writingMode)
                             .on('click', function () {
-                            if (lvl != 0) {
-                                _this.clickEvent(newModel, options, newModel.dataPoints[i].id, listTeams, numberOfVisibleLevels, i);
-                            }
+                            _this.selectEvent(newModel, i);
                         });
                     };
                     DrawElements.prototype.drawingSubtitle = function (xCenterCoordinate, yCenterCoordinate, newModel, options, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels, lvl, isHeightGreaterThanWidth) {
@@ -4610,9 +4696,9 @@ var powerbi;
                             xCoordinate = xCenterCoordinate;
                             yCoordinate = yCenterCoordinate - fontSizeValue * 3 + offsetValue;
                         }
-                        Visual.surnameTextValue = Visual.barGroup.append("text")
-                            .classed("surnameTextValue", true);
-                        Visual.surnameTextValue
+                        Visual.subtitleTextValue = Visual.barGroup.append("text")
+                            .classed("subtitleTextValue", true);
+                        Visual.subtitleTextValue
                             .text(newModel.dataPoints[i].position)
                             .attr({
                             x: xCoordinate,
@@ -4621,13 +4707,53 @@ var powerbi;
                             "text-anchor": "middle"
                         })
                             .style("fill", Visual.colorName)
-                            .style("font-size", Visual.CustomFontSizeSubtitleInShape + "px")
+                            .style("font-size", Visual.customFontSizeSubtitleInShape + "px")
                             .style("writing-mode", writingMode)
                             .on('click', function () {
-                            if (lvl != 0) {
-                                _this.clickEvent(newModel, options, newModel.dataPoints[i].id, listTeams, numberOfVisibleLevels, i);
-                            }
+                            _this.selectEvent(newModel, i);
                         });
+                    };
+                    DrawElements.prototype.selectEvent = function (newModel, i) {
+                        Visual.selectionManager.select(newModel.dataPoints[i].selectionId, true);
+                        if (!newModel.dataPoints[i].boolSelectionId) {
+                            newModel.dataPoints[i].boolSelectionId = true;
+                        }
+                        else {
+                            newModel.dataPoints[i].boolSelectionId = false;
+                        }
+                        var noSelected = true;
+                        for (var j = 0; j < newModel.dataPoints.length; j++) {
+                            if (newModel.dataPoints[j].boolSelectionId) {
+                                noSelected = false;
+                                Visual.barGroup
+                                    .selectAll(".rectangle")
+                                    .style('opacity', 0.5);
+                                Visual.barGroup
+                                    .selectAll(".circle")
+                                    .style('opacity', 0.5);
+                                break;
+                            }
+                        }
+                        if (noSelected) {
+                            Visual.barGroup
+                                .selectAll(".rectangle")
+                                .style('opacity', 1);
+                            Visual.barGroup
+                                .selectAll(".circle")
+                                .style('opacity', 1);
+                            Visual.selectionManager.clear();
+                            for (var j = 0; j < newModel.dataPoints.length; j++) {
+                                newModel.dataPoints[j].boolSelectionId = false;
+                            }
+                        }
+                        for (var j = 0; j < newModel.dataPoints.length; j++) {
+                            var id = newModel.dataPoints[j].id;
+                            if (newModel.dataPoints[j].boolSelectionId) {
+                                Visual.barGroup
+                                    .selectAll(".id" + id)
+                                    .style('opacity', 1);
+                            }
+                        }
                     };
                     DrawElements.prototype.clickEvent = function (newModel, options, nameOfTheParent, listTeams, numberOfVisibleLevels, i) {
                         DrawElements.deletingOldShapes();
@@ -4694,7 +4820,7 @@ var powerbi;
                             .selectAll(".nameTextValue")
                             .remove();
                         Visual.barGroup
-                            .selectAll(".surnameTextValue")
+                            .selectAll(".subtitleTextValue")
                             .remove();
                         Visual.barGroup
                             .selectAll(".connection")
@@ -4911,6 +5037,7 @@ var powerbi;
                             team: "",
                             position: "",
                             selectionId: undefined,
+                            boolSelectionId: false,
                             teamId: 0,
                             highlighted: false,
                             isHeirs: false,
@@ -4940,23 +5067,30 @@ var powerbi;
                                 break;
                             }
                         }
-                        newViewModel.dataPoints.push(lvlUp);
-                        do {
-                            for (var i = 0; i < cashModel.dataPoints.length; i++) {
-                                if (cashModel.dataPoints[i].reportTo == newViewModel.dataPoints[0].id) {
-                                    cashModel.dataPoints[i].lvl = _lvl;
-                                    newViewModel.dataPoints.push(cashModel.dataPoints[i]);
-                                    sortModel.dataPoints.push(cashModel.dataPoints[i]);
+                        if (newViewModel.dataPoints.length != 0) {
+                            newViewModel.dataPoints.push(lvlUp);
+                            do {
+                                for (var i = 0; i < cashModel.dataPoints.length; i++) {
+                                    if (cashModel.dataPoints[i].reportTo == newViewModel.dataPoints[0].id) {
+                                        cashModel.dataPoints[i].lvl = _lvl;
+                                        newViewModel.dataPoints.push(cashModel.dataPoints[i]);
+                                        sortModel.dataPoints.push(cashModel.dataPoints[i]);
+                                    }
                                 }
-                            }
-                            newViewModel.dataPoints.splice(0, 1);
-                            if (newViewModel.dataPoints[0].reportTo && newViewModel.dataPoints[0].id == "lvlUp") {
-                                _lvl++;
                                 newViewModel.dataPoints.splice(0, 1);
-                                newViewModel.dataPoints.push(lvlUp);
-                            }
-                        } while (newViewModel.dataPoints.length != 1);
-                        Visual.numberOfLevels = _lvl - 1;
+                                if (newViewModel.dataPoints[0].reportTo && newViewModel.dataPoints[0].id == "lvlUp") {
+                                    _lvl++;
+                                    newViewModel.dataPoints.splice(0, 1);
+                                    newViewModel.dataPoints.push(lvlUp);
+                                }
+                            } while (newViewModel.dataPoints.length != 1);
+                            Visual.criticalError = false;
+                            Visual.numberOfLevels = _lvl - 1;
+                        }
+                        else {
+                            Visual.criticalError = true;
+                            Visual.numberOfLevels = _lvl - 1;
+                        }
                         return sortModel;
                     };
                     return CalculationsForDrawing;
@@ -4989,6 +5123,9 @@ var powerbi;
                         var isUniqueTeam;
                         for (var i = 0; i < newModel.dataPoints.length; i++) {
                             isUniqueTeam = true;
+                            if ((newModel.dataPoints[i].team == " ") || (newModel.dataPoints[i].team == null)) {
+                                newModel.dataPoints[i].team = "";
+                            }
                             for (var j = 0; j < teamModelList.teamModel.length; j++) {
                                 if (newModel.dataPoints[i].team === teamModelList.teamModel[j].team) {
                                     isUniqueTeam = false;
@@ -5001,6 +5138,7 @@ var powerbi;
                                     team: newModel.dataPoints[i].team,
                                     color: "yellow",
                                     teamId: counter,
+                                    boolSelectionIds: false,
                                     selectionIds: previousModel.teamSet[teamName].selectionIds || []
                                 };
                                 counter++;
@@ -5022,45 +5160,88 @@ var powerbi;
                             highlights: false
                         };
                         modelProblemElements = this.searchForErroneousElements(viewModel, modelWithLevels, modelProblemElements);
-                        this.definitionOfSelfCycling(modelProblemElements, viewModel);
+                        this.definitionOfWarnings(modelProblemElements, viewModel);
                     };
                     WorkWithWarning.prototype.searchForErroneousElements = function (viewModel, modelWithLevels, modelProblemElements) {
                         modelProblemElements.dataPoints = viewModel.dataPoints.filter(function (obj) { return modelWithLevels.dataPoints.indexOf(obj) == -1; });
                         return modelProblemElements;
                     };
-                    WorkWithWarning.prototype.definitionOfSelfCycling = function (modelProblemElements, viewModel) {
+                    WorkWithWarning.prototype.searchForSimilarId = function (viewModel) {
+                        Visual.sameId = false;
+                        for (var i = 0; i < viewModel.dataPoints.length; i++) {
+                            for (var j = 0; j < viewModel.dataPoints.length; j++) {
+                                //console.log(viewModel.dataPoints[i].id, viewModel.dataPoints[j].id);
+                                if ((viewModel.dataPoints[i].id == viewModel.dataPoints[j].id) && (viewModel.dataPoints[i].id != "") && (viewModel.dataPoints[i].id != " ") && (viewModel.dataPoints[i].id != null) && (i != j)) {
+                                    Visual.sameId = true;
+                                }
+                            }
+                        }
+                    };
+                    WorkWithWarning.prototype.definitionOfWarnings = function (modelProblemElements, viewModel) {
                         Visual.errorList = new Array();
                         var orphan = true;
+                        //let sameId = false;
                         Visual.errorList[0] = "";
                         Visual.errorList[2] = "";
                         Visual.errorList[4] = "";
                         Visual.errorList[6] = "";
+                        Visual.errorList[8] = "";
+                        Visual.errorList[10] = "";
                         for (var i = 0; i < modelProblemElements.dataPoints.length; i++) {
-                            if (modelProblemElements.dataPoints[i].id == "notFound") {
-                                Visual.errorList[0] = "do not have id";
-                            }
-                            if (modelProblemElements.dataPoints[i].id == modelProblemElements.dataPoints[i].reportTo) {
-                                Visual.errorList[2] = Visual.errorList[2] + " " + modelProblemElements.dataPoints[i].id;
+                            if (viewModel.dataPoints.length == modelProblemElements.dataPoints.length) {
+                                Visual.errorList[0] = "The data does not contain a root element";
                             }
                             else {
-                                for (var j = 0; j < viewModel.dataPoints.length; j++) {
-                                    if (modelProblemElements.dataPoints[i].reportTo == viewModel.dataPoints[j].id) {
-                                        orphan = false;
-                                    }
-                                }
-                                if (orphan) {
-                                    Visual.errorList[4] = Visual.errorList[4] + " " + modelProblemElements.dataPoints[i].id;
+                                if ((modelProblemElements.dataPoints[i].reportTo == "") || (modelProblemElements.dataPoints[i].reportTo == " ") || (modelProblemElements.dataPoints[i].reportTo == null)) {
+                                    Visual.errorList[2] = "- Data contain two or more root nodes";
                                 }
                                 else {
-                                    Visual.errorList[6] = Visual.errorList[6] + " " + modelProblemElements.dataPoints[i].id;
+                                    if (modelProblemElements.dataPoints[i].id == "notFound") {
+                                        Visual.errorList[4] = "do not have id";
+                                    }
+                                    else {
+                                        if (modelProblemElements.dataPoints[i].id == modelProblemElements.dataPoints[i].reportTo) {
+                                            Visual.errorList[6] = Visual.errorList[7] + " " + modelProblemElements.dataPoints[i].id;
+                                        }
+                                        else {
+                                            for (var j = 0; j < viewModel.dataPoints.length; j++) {
+                                                if (modelProblemElements.dataPoints[i].reportTo == viewModel.dataPoints[j].id) {
+                                                    orphan = false;
+                                                }
+                                            }
+                                            if (orphan) {
+                                                Visual.errorList[8] = Visual.errorList[8] + " " + modelProblemElements.dataPoints[i].id;
+                                            }
+                                            else {
+                                                Visual.errorList[10] = Visual.errorList[10] + " " + modelProblemElements.dataPoints[i].id;
+                                            }
+                                        }
+                                        orphan = true;
+                                    }
                                 }
                             }
-                            orphan = true;
                         }
                         Visual.errorList[1] = "";
-                        Visual.errorList[3] = "are looped on each other";
-                        Visual.errorList[5] = "have non-existing id";
-                        Visual.errorList[7] = "are not associated with the main tree ";
+                        Visual.errorList[3] = "";
+                        Visual.errorList[5] = "";
+                        Visual.errorList[7] = "are looped on each other";
+                        Visual.errorList[9] = "have non-existing id";
+                        Visual.errorList[11] = "are not associated with the main tree ";
+                        /*
+                        for (let i = 0; i < viewModel.dataPoints.length; i++) {
+                            for (let j = 0; j < viewModel.dataPoints.length; j++) {
+                                //console.log(viewModel.dataPoints[i].id, viewModel.dataPoints[j].id);
+                                if((viewModel.dataPoints[i].id == viewModel.dataPoints[j].id)&&(viewModel.dataPoints[i].id != "")&&(viewModel.dataPoints[i].id != " ")&&(viewModel.dataPoints[i].id != null)&&(i!=j)){
+                                    sameId = true;
+                                    //console.log("IsError");
+                                }
+                            }
+                        }
+                        */
+                        if (Visual.sameId) {
+                            Visual.errorList[12] = "have same Id";
+                            Visual.criticalError = true;
+                        }
                     };
                     return WorkWithWarning;
                 }());
@@ -5094,35 +5275,40 @@ var powerbi;
                     };
                     DrawWarning.prototype.drawingWarningWindow = function (options) {
                         var yCoordinate = 25;
-                        var widthWindow = 210;
+                        var widthWindow = 248;
                         var text;
                         Visual.warningWindow = Visual.barGroup.append("rect")
                             .classed('warningWindow', true);
                         if (Visual.visualWindowWidth < 280) {
-                            widthWindow = Visual.visualWindowWidth - 50;
+                            widthWindow = Visual.visualWindowWidth - 25;
                         }
                         for (var i = 0; i < Visual.errorList.length; i = i + 2) {
                             if (Visual.errorList[i].length != 0) {
-                                text = "- Items ";
+                                if (i > 3) {
+                                    text = "- Items ";
+                                }
+                                else {
+                                    text = "";
+                                }
                                 var k = 0;
                                 var error = Visual.errorList[i].split(' ');
                                 for (var j = 0; j < error.length; j++) {
                                     text = text + " " + error[j];
                                     k++;
                                     if (k > 9) {
-                                        this.drawingWarningText(options, text, yCoordinate);
+                                        this.drawingWarningText(options, text, yCoordinate, i);
                                         yCoordinate = yCoordinate + 15;
                                         k = 0;
                                         text = " ";
                                     }
                                 }
                                 if (k != 0) {
-                                    this.drawingWarningText(options, text, yCoordinate);
+                                    this.drawingWarningText(options, text, yCoordinate, i);
                                 }
                                 yCoordinate = yCoordinate + 15;
                                 text = Visual.errorList[i + 1];
                                 if (text != "") {
-                                    this.drawingWarningText(options, text, yCoordinate);
+                                    this.drawingWarningText(options, text, yCoordinate, i);
                                     yCoordinate = yCoordinate + 15;
                                 }
                             }
@@ -5139,7 +5325,11 @@ var powerbi;
                             height: yCoordinate - 10
                         });
                     };
-                    DrawWarning.prototype.drawingWarningText = function (options, error, yCoordinate) {
+                    DrawWarning.prototype.drawingWarningText = function (options, error, yCoordinate, errorId) {
+                        var color = "black";
+                        if ((errorId == 0) || (errorId == 12)) {
+                            color = "red";
+                        }
                         Visual.warningText = Visual.barGroup.append("text")
                             .classed('warningText', true);
                         Visual.warningText
@@ -5148,7 +5338,8 @@ var powerbi;
                             x: 55,
                             y: yCoordinate
                         }).style("font-size", 12 + "px")
-                            .style("text-align", "left");
+                            .style("fill", color)
+                            .style("text-align", "left").text();
                     };
                     return DrawWarning;
                 }());
@@ -5162,8 +5353,8 @@ var powerbi;
     (function (visuals) {
         var plugins;
         (function (plugins) {
-            plugins.chart6F792A8745784877BCD8F4ACA5AD4207_DEBUG = {
-                name: 'chart6F792A8745784877BCD8F4ACA5AD4207_DEBUG',
+            plugins.chart6F792A8745784877BCD8F4ACA5AD4207 = {
+                name: 'chart6F792A8745784877BCD8F4ACA5AD4207',
                 displayName: 'Chart',
                 class: 'Visual',
                 version: '1.0.0',

@@ -197,7 +197,7 @@
                     }
                 },
                 "colorName": {
-                    "displayName": "Text color",
+                    "displayName": "Font color",
                     "displayNameKey": "Visual_Color_Name",
                     "type": {
                         "fill": {
