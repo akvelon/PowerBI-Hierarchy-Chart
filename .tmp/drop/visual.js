@@ -3598,31 +3598,6 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-/*
- *  Power BI Visualizations
- *
- *  Copyright (c) Microsoft Corporation
- *  All rights reserved.
- *  MIT License
- *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
- *  of this software and associated documentation files (the ""Software""), to deal
- *  in the Software without restriction, including without limitation the rights
- *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- *  copies of the Software, and to permit persons to whom the Software is
- *  furnished to do so, subject to the following conditions:
- *
- *  The above copyright notice and this permission notice shall be included in
- *  all copies or substantial portions of the Software.
- *
- *  THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- *  THE SOFTWARE.
- */
 var powerbi;
 (function (powerbi) {
     var extensibility;
@@ -3647,20 +3622,6 @@ var powerbi;
                     return VisualSettings;
                 }(DataViewObjectsParser));
                 chart6F792A8745784877BCD8F4ACA5AD4207.VisualSettings = VisualSettings;
-                /*
-                  export class dataPointSettings {
-                    // Default color
-                    public defaultColor: string = "";
-                    // Show all
-                    public showAllDataPoints: boolean = true;
-                    // Fill
-                    public fill: string = "";
-                    // Color saturation
-                    public fillRule: string = "";
-                    // Text Size
-                    public fontSize: number = 12;
-                  }
-                */
                 var levelsSettings = (function () {
                     function levelsSettings() {
                         this.controls = true;
@@ -3724,59 +3685,73 @@ var powerbi;
             var chart6F792A8745784877BCD8F4ACA5AD4207;
             (function (chart6F792A8745784877BCD8F4ACA5AD4207) {
                 var ColorHelper = powerbi.extensibility.utils.color.ColorHelper;
-                ;
-                ;
-                ;
-                ;
                 var Visual = (function () {
                     function Visual(options) {
                         this.host = options.host;
                         this.colorPalette = this.host.colorPalette;
-                        Visual.selectionManager = options.host.createSelectionManager();
-                        Visual.divOuter = d3.select(options.element).append("div").classed("divOuter", true);
-                        Visual.divInner = Visual.divOuter.append("div");
-                        Visual.svg = Visual.divInner.append("svg");
-                        Visual.barGroup = Visual.svg
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.selectionManager = options.host.createSelectionManager();
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.divOuter = d3.select(options.element).append("div").classed("divOuter", true);
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.divInner = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.divOuter.append("div");
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.svg = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.divInner.append("svg");
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.backgroundWindow = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.svg
+                            .append("g")
+                            .classed("backgroundWindow", true);
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.svg
                             .append("g")
                             .classed("bar-group", true);
                     }
+                    Visual.prototype.sortIndication = function (firstObject, secondObject) {
+                        if (firstObject.id > secondObject.id)
+                            return 1;
+                        else if (firstObject.id < secondObject.id)
+                            return -1;
+                        else
+                            return 0;
+                    };
                     Visual.prototype.update = function (options) {
-                        Visual.scrollLeft = 0;
-                        Visual.scrollRight = 1;
-                        Visual.divOuter.style({ width: options.viewport.width + "px", height: options.viewport.height + "px" });
-                        DrawElements.deletingOldShapes();
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.scrollLeft = 0;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.scrollRight = 1;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.divOuter.style({ width: options.viewport.width + "px", height: options.viewport.height + "px" });
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DrawElements.deletingOldShapes();
                         var viewModel = this.getViewModel(options);
                         this.viewModel = viewModel;
                         this.settings = chart6F792A8745784877BCD8F4ACA5AD4207.VisualSettings.parse(options
                             && options.dataViews
                             && options.dataViews[0]);
-                        Visual.visualWindowWidth = options.viewport.width;
-                        Visual.visualWindowHeight = options.viewport.height;
-                        Visual.colorName = this.settings.nodes.colorName;
-                        Visual.displayHeightAndWidth = this.settings.nodes.displayHeightAndWidth;
-                        Visual.customShapeHeight = this.settings.nodes.height;
-                        Visual.customShapeWidth = this.settings.nodes.width;
-                        Visual.linksColor = this.settings.links.color;
-                        Visual.isControls = this.settings.levels.controls;
-                        Visual.customFontSizeTitleInShape = this.settings.nodes.fontSize;
-                        Visual.customFontSizeSubtitleInShape = this.settings.nodes.fontSubtitleSize;
-                        Visual.shapeType = this.settings.nodes.shape;
-                        Visual.distanceBetweenTitleAndSubtitle = this.settings.nodes.distanceBetweenTitleAndSubtitle;
-                        Visual.legend = this.settings.legend.position;
-                        Visual.colorLegend = this.settings.legend.colorLegend;
-                        Visual.fontLegendSize = this.settings.legend.fontSize;
-                        Visual.showLegendTitle = this.settings.legend.showLegend;
-                        Visual.showLegend = this.settings.legend.show;
-                        Visual.titleLegend = this.settings.legend.titleLegend;
-                        Visual.isMaxDepth = this.settings.levels.isMaxDepth;
-                        Visual.showNodes = this.settings.nodes.show;
-                        Visual.showWarning = this.settings.warning.show;
-                        var drawElements = new DrawElements();
-                        var calculationsForDrawing = new CalculationsForDrawing();
-                        var drawControlPanel = new DrawControlPanel();
-                        var workWithTeams = new WorkWithTeams();
-                        var workWithWarning = new WorkWithWarning();
-                        Visual.isWarning = false;
+                        viewModel.dataPoints = viewModel.dataPoints.sort(this.sortIndication);
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth = options.viewport.width;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowHeight = options.viewport.height;
+                        //initialization of user values (with tab Format)
+                        var nodes = this.settings.nodes;
+                        var links = this.settings.links;
+                        var levels = this.settings.levels;
+                        var legend = this.settings.legend;
+                        var warning = this.settings.warning;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.colorName = nodes.colorName;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.displayHeightAndWidth = nodes.displayHeightAndWidth;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.customShapeHeight = nodes.height;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.customShapeWidth = nodes.width;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.linksColor = links.color;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isControls = levels.controls;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.customFontSizeTitle = nodes.fontSize;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.customFontSizeSubtitle = nodes.fontSubtitleSize;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.shapeType = nodes.shape;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.distanceBetweenTitleAndSubtitle = nodes.distanceBetweenTitleAndSubtitle;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.legend = legend.position;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.colorLegend = legend.colorLegend;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.fontLegendSize = legend.fontSize;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.showLegendTitle = legend.showLegend;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.showLegend = legend.show;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.titleLegend = legend.titleLegend;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isMaxDepth = levels.isMaxDepth;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.showNodes = nodes.show;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.showWarning = warning.show;
+                        var drawElements = new chart6F792A8745784877BCD8F4ACA5AD4207.DrawElements();
+                        var calculationsForDrawing = new chart6F792A8745784877BCD8F4ACA5AD4207.CalculationsForDrawing();
+                        var drawControlPanel = new chart6F792A8745784877BCD8F4ACA5AD4207.DrawControlPanel();
+                        var workWithTeams = new chart6F792A8745784877BCD8F4ACA5AD4207.WorkWithTeams();
+                        var workWithWarning = new chart6F792A8745784877BCD8F4ACA5AD4207.WorkWithWarning();
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isWarning = false;
                         for (var i = 0; i < viewModel.dataPoints.length; i++) {
                             if (viewModel.dataPoints[i].id == null) {
                                 viewModel.dataPoints[i].id = "notFound";
@@ -3785,47 +3760,46 @@ var powerbi;
                         }
                         var modelWithLevels = calculationsForDrawing.findLevels(viewModel);
                         workWithWarning.searchForSimilarId(viewModel);
-                        if ((viewModel.dataPoints.length != modelWithLevels.dataPoints.length) || (Visual.sameId)) {
+                        if ((viewModel.dataPoints.length != modelWithLevels.dataPoints.length) || (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.sameId)) {
                             workWithWarning.handlingOfWarnings(viewModel, modelWithLevels);
                         }
                         calculationsForDrawing.searchOfHeirs(modelWithLevels);
-                        calculationsForDrawing.numberOfElementsOnEachLevel(modelWithLevels);
-                        Visual.maxDepth = this.settings.levels.maxDepth;
-                        if ((Visual.maxDepth > 1) && (Visual.maxDepth < Visual.numberOfLevels) && (Visual.isMaxDepth)) {
-                            Visual.numberOfLevels = Visual.maxDepth - 1;
+                        calculationsForDrawing.numbElemOnEachLevl(modelWithLevels);
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.maxDepth = this.settings.levels.maxDepth;
+                        if ((chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.maxDepth > 1) && (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.maxDepth < chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbOfLevels) && (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isMaxDepth)) {
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbOfLevels = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.maxDepth - 1;
                         }
-                        var numberOfVisibleLevels = Visual.numberOfLevels - 1;
+                        var numberOfVisibleLevels = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbOfLevels - 1;
                         var modelWithVisibleElements = calculationsForDrawing.makingVisibleLevels(modelWithLevels, 0, numberOfVisibleLevels);
-                        calculationsForDrawing.findLevelsThatIsVisible(modelWithVisibleElements);
-                        calculationsForDrawing.numberOfElementsOnEachLevelThatIsVisible(modelWithVisibleElements);
+                        calculationsForDrawing.findVisibleLevels(modelWithVisibleElements);
+                        calculationsForDrawing.countVisibleElemOnEachLevel(modelWithVisibleElements);
                         var listTeams = workWithTeams.joiningCommandsWithColors(modelWithVisibleElements, viewModel);
-                        modelWithVisibleElements = calculationsForDrawing.calculationOfWeightingCoefficients(modelWithVisibleElements);
-                        if (Visual.displayHeightAndWidth) {
-                            Visual.divOuter.style("overflow", "auto");
-                            if ((Visual.customShapeHeight > 0) && (Visual.customShapeWidth > 0)) {
-                                Visual.visualWindowHeight = (Visual.customShapeHeight + Visual.customShapeHeight / 1.3) * Visual.numberOfLevelsThatIsVisible;
-                                if ((Visual.showWarning) && (Visual.isWarning)) {
-                                    Visual.visualWindowHeight = Visual.visualWindowHeight + 100;
+                        modelWithVisibleElements = calculationsForDrawing.calcOfWeightCof(modelWithVisibleElements);
+                        if (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.displayHeightAndWidth) {
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.divOuter.style("overflow", "auto");
+                            if ((chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.customShapeHeight > 0) && (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.customShapeWidth > 0)) {
+                                chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowHeight = (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.customShapeHeight + chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.customShapeHeight / 1.3) * chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbVisibleLevls;
+                                if ((chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.showWarning) && (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isWarning)) {
+                                    chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowHeight = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowHeight + 100;
                                 }
-                                Visual.visualWindowWidth = Visual.customShapeWidth * 1.3 * Visual.maximumElementWeight;
+                                chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.customShapeWidth * 1.3 * chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.maxElemWeight;
                             }
                             else {
-                                Visual.displayHeightAndWidth = false;
+                                chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.displayHeightAndWidth = false;
                             }
                         }
-                        Visual.visualWindowWidth = Visual.visualWindowWidth - 25;
-                        Visual.visualWindowHeight = Visual.visualWindowHeight - 25;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth - 25;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowHeight = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowHeight - 25;
                         var minWindowHeight = 130;
-                        if ((Visual.showWarning) && (Visual.isWarning)) {
-                            Visual.visualWindowHeight = Visual.visualWindowHeight;
+                        if ((chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.showWarning) && (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isWarning)) {
                             minWindowHeight = 180;
                         }
                         var heightOfTheShape = 0;
-                        if ((options.viewport.height > minWindowHeight) && (!Visual.criticalError)) {
+                        if ((options.viewport.height > minWindowHeight) && (!chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.criticalError)) {
                             heightOfTheShape = drawElements.drawingElements(options, modelWithVisibleElements, listTeams, numberOfVisibleLevels);
                             drawElements.drawingRelationships(modelWithVisibleElements, heightOfTheShape);
                         }
-                        drawControlPanel.drawingControlPanel(options, modelWithVisibleElements, listTeams, heightOfTheShape, numberOfVisibleLevels);
+                        drawControlPanel.drawControlPanel(options, modelWithVisibleElements, listTeams, heightOfTheShape, numberOfVisibleLevels);
                     };
                     Visual.prototype.enumerateObjectInstances = function (options) {
                         var settings = this.settings
@@ -3868,6 +3842,7 @@ var powerbi;
                             instanceEnumeration.push(instance);
                         }
                     };
+                    //getting data from a form (power bi)
                     Visual.prototype.getViewModel = function (options) {
                         var dataViews = options.dataViews;
                         var viewModel = {
@@ -3889,8 +3864,8 @@ var powerbi;
                             team: -1,
                             position: -1,
                         };
-                        dataView.metadata.columns.forEach(function (column, columnIndex) {
-                            Object.keys(column.roles).forEach(function (roleName) {
+                        dataView.categorical.categories.forEach(function (column, columnIndex) {
+                            Object.keys(column.source.roles).forEach(function (roleName) {
                                 columnIndexes[roleName] = columnIndex;
                             });
                         });
@@ -3910,6 +3885,16 @@ var powerbi;
                             var isVisible = false;
                             var team = "";
                             var position = "";
+                            var teamId = 0;
+                            var boolSelectionIds = false;
+                            var isHeirs = false;
+                            var elementWeight = 0;
+                            var parentStartX = 0;
+                            var highlighted = highlights ? highlights[dataPointIndex] ? true : false : false;
+                            var selectionId = this.host.createSelectionIdBuilder()
+                                .withCategory(categories[columnIndexes.category], dataPointIndex)
+                                .createSelectionId();
+                            var boolSelectionId = false;
                             if (categories[columnIndexes.position] == undefined) {
                                 position = "";
                             }
@@ -3922,22 +3907,11 @@ var powerbi;
                             else {
                                 team = categories[columnIndexes.team].values[dataPointIndex];
                             }
-                            //console.log(id, title, position, reportTo, team);
-                            var teamId = 0;
-                            var boolSelectionIds = false;
-                            var isHeirs = false;
-                            var elementWeight = 0;
-                            var parentStartX = 0;
-                            var highlighted = highlights ? highlights[dataPointIndex] ? true : false : false;
-                            var selectionId = this.host.createSelectionIdBuilder()
-                                .withCategory(categories[columnIndexes.category], dataPointIndex)
-                                .createSelectionId();
-                            var boolSelectionId = false;
                             if (((team == " ") || (team == null) || (team == "")) && (columnIndexes.team != -1)) {
                                 team = "Fill";
                             }
                             if (!viewModel.teamSet[team]) {
-                                var color = this.getColor(Visual.TeamsColorIdentifier, Visual.defaultColor, categories[columnIndexes.category].objects
+                                var color = this.getColor(Visual.TeamsColorIdentifier, chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.defaultColor, categories[columnIndexes.category].objects
                                     && categories[columnIndexes.category].objects[dataPointIndex]
                                     || {});
                                 viewModel.teamSet[team] = {
@@ -3975,56 +3949,62 @@ var powerbi;
                     };
                     return Visual;
                 }());
-                Visual.isWarning = false;
-                Visual.isDependenciesVisible = false;
-                Visual.isExternalEventClick = false;
-                Visual.maximumElementWeight = 0;
-                Visual.criticalError = false;
-                Visual.sameId = false;
                 Visual.TeamsColorIdentifier = {
                     objectName: "teams",
                     propertyName: "fill"
                 };
-                //User(Custom) settings
-                Visual.defaultColor = "green";
-                Visual.isControls = true;
                 chart6F792A8745784877BCD8F4ACA5AD4207.Visual = Visual;
+            })(chart6F792A8745784877BCD8F4ACA5AD4207 = visual.chart6F792A8745784877BCD8F4ACA5AD4207 || (visual.chart6F792A8745784877BCD8F4ACA5AD4207 = {}));
+        })(visual = extensibility.visual || (extensibility.visual = {}));
+    })(extensibility = powerbi.extensibility || (powerbi.extensibility = {}));
+})(powerbi || (powerbi = {}));
+var powerbi;
+(function (powerbi) {
+    var extensibility;
+    (function (extensibility) {
+        var visual;
+        (function (visual) {
+            var chart6F792A8745784877BCD8F4ACA5AD4207;
+            (function (chart6F792A8745784877BCD8F4ACA5AD4207) {
+                //Сlass responsible for the work connected with the legend (legend position, scrolling legend, click on the legend),
+                // buttons to control the levels of nesting
                 var DrawControlPanel = (function () {
                     function DrawControlPanel() {
                     }
-                    DrawControlPanel.prototype.drawingControlPanel = function (options, newModel, listTeams, heightOfTheShape, numberOfVisibleLevels) {
-                        if ((Visual.isControls) && (options.viewport.height > 130) && (!Visual.criticalError)) {
+                    DrawControlPanel.prototype.drawControlPanel = function (options, newModel, listTeams, heightOfTheShape, numberOfVisibleLevels) {
+                        this.resetSelectedItems(options, newModel, listTeams);
+                        if ((chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isControls) && (options.viewport.height > 130) && (!chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.criticalError)) {
                             this.drawingControlButtons(options, heightOfTheShape, newModel, numberOfVisibleLevels, listTeams);
                         }
-                        if ((Visual.showLegend) && (!Visual.criticalError)) {
-                            if (Visual.legend == "0") {
-                                this.drawingMarks(options, listTeams, heightOfTheShape, newModel, true);
+                        if ((chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.showLegend) && (!chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.criticalError)) {
+                            if (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.legend == "0") {
+                                this.drawingMarks(listTeams, true, newModel);
                                 if (DrawControlPanel.displayScroll) {
-                                    this.scrollButtonLeft(options, newModel, listTeams, heightOfTheShape, numberOfVisibleLevels, true, newModel);
-                                    this.scrollButtonRight(options, newModel, listTeams, heightOfTheShape, numberOfVisibleLevels, true, newModel);
+                                    this.scrollButtonLeft(listTeams, true, newModel);
+                                    this.scrollButtonRight(listTeams, true, newModel);
                                 }
                             }
-                            if (Visual.legend == "1") {
-                                this.drawingMarks(options, listTeams, heightOfTheShape, newModel, false);
+                            if (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.legend == "1") {
+                                this.drawingMarks(listTeams, false, newModel);
                                 if (DrawControlPanel.displayScroll) {
-                                    this.scrollButtonLeft(options, newModel, listTeams, heightOfTheShape, numberOfVisibleLevels, false, newModel);
-                                    this.scrollButtonRight(options, newModel, listTeams, heightOfTheShape, numberOfVisibleLevels, false, newModel);
+                                    this.scrollButtonLeft(listTeams, false, newModel);
+                                    this.scrollButtonRight(listTeams, false, newModel);
                                 }
                             }
-                            if (Visual.legend == "2") {
-                                this.drawingMarksAuto(options, listTeams, heightOfTheShape, newModel);
+                            if (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.legend == "2") {
+                                this.drawingMarksAuto(listTeams, heightOfTheShape, newModel);
                             }
                         }
-                        if ((Visual.showWarning) && (Visual.isWarning)) {
-                            var drawWarning = new DrawWarning();
-                            drawWarning.drawingWarningSign(options);
+                        if ((chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.showWarning) && (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isWarning)) {
+                            var drawWarning = new chart6F792A8745784877BCD8F4ACA5AD4207.DrawWarning();
+                            drawWarning.drawingWarningSign();
                         }
                     };
                     DrawControlPanel.prototype.drawingControlButtons = function (options, heightOfTheShape, newModel, numberOfVisibleLevels, listTeams) {
-                        var xButtonCoordinateAdd = newModel.dataPoints[0].xCoordinate - Visual.widthOfTheShape / 1.1;
-                        var xButtonCoordinateMinus = newModel.dataPoints[0].xCoordinate + Visual.widthOfTheShape / 1.1;
-                        if (Visual.displayHeightAndWidth) {
-                            heightOfTheShape = Visual.customShapeHeight;
+                        var xButtonCoordinateAdd = newModel.dataPoints[0].xCoordinate - chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.widthOfTheShape / 1.1;
+                        var xButtonCoordinateMinus = newModel.dataPoints[0].xCoordinate + chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.widthOfTheShape / 1.1;
+                        if (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.displayHeightAndWidth) {
+                            heightOfTheShape = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.customShapeHeight;
                         }
                         var yButtonCoordinate = newModel.dataPoints[0].yCoordinate - heightOfTheShape / 1.2;
                         this.drowingButton(options, yButtonCoordinate, xButtonCoordinateAdd, newModel, numberOfVisibleLevels, listTeams, true, "+");
@@ -4032,9 +4012,9 @@ var powerbi;
                     };
                     DrawControlPanel.prototype.drowingButton = function (options, yCoordinate, xCoordinate, newModel, numberOfVisibleLevels, listTeams, isChangeLevel, sign) {
                         var _this = this;
-                        Visual.nameTextValue = Visual.barGroup.append("text")
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.nameTextValue = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup.append("text")
                             .classed("nameTextValue", true);
-                        Visual.nameTextValue
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.nameTextValue
                             .text(sign)
                             .attr({
                             x: xCoordinate,
@@ -4044,13 +4024,13 @@ var powerbi;
                         }).style("font-size", 40 + "px")
                             .style("text-align", "left")
                             .on('click', function () {
-                            _this.clickButtonEvent(newModel, options, numberOfVisibleLevels, listTeams, isChangeLevel);
+                            _this.clickButtonEvent(options, newModel, numberOfVisibleLevels, listTeams, isChangeLevel);
                         });
                     };
-                    DrawControlPanel.prototype.clickButtonEvent = function (newModel, options, numberOfVisibleLevels, listTeams, isChangeLevel) {
-                        DrawElements.deletingOldShapes();
+                    DrawControlPanel.prototype.clickButtonEvent = function (options, newModel, numberOfVisibleLevels, listTeams, isChangeLevel) {
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DrawElements.deletingOldShapes();
                         if (isChangeLevel) {
-                            if (numberOfVisibleLevels < Visual.numberOfLevels - 1) {
+                            if (numberOfVisibleLevels < chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbOfLevels - 1) {
                                 numberOfVisibleLevels = numberOfVisibleLevels + 1;
                             }
                         }
@@ -4059,149 +4039,85 @@ var powerbi;
                                 numberOfVisibleLevels = numberOfVisibleLevels - 1;
                             }
                         }
-                        Visual.scrollLeft = 0;
-                        Visual.scrollRight = 1;
-                        var drawElements = new DrawElements();
-                        var calculationsForDrawing = new CalculationsForDrawing();
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.scrollLeft = 0;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.scrollRight = 1;
+                        var drawElements = new chart6F792A8745784877BCD8F4ACA5AD4207.DrawElements();
+                        var calculationsForDrawing = new chart6F792A8745784877BCD8F4ACA5AD4207.CalculationsForDrawing();
                         var modelWithVisibleElements = calculationsForDrawing.makingVisibleLevels(newModel, 0, numberOfVisibleLevels);
-                        calculationsForDrawing.findLevelsThatIsVisible(modelWithVisibleElements);
-                        calculationsForDrawing.numberOfElementsOnEachLevelThatIsVisible(modelWithVisibleElements);
-                        modelWithVisibleElements = calculationsForDrawing.calculationOfWeightingCoefficients(modelWithVisibleElements);
+                        calculationsForDrawing.findVisibleLevels(modelWithVisibleElements);
+                        calculationsForDrawing.countVisibleElemOnEachLevel(modelWithVisibleElements);
+                        modelWithVisibleElements = calculationsForDrawing.calcOfWeightCof(modelWithVisibleElements);
                         var heightOfTheShape = drawElements.drawingElements(options, modelWithVisibleElements, listTeams, numberOfVisibleLevels);
                         drawElements.drawingRelationships(modelWithVisibleElements, heightOfTheShape);
-                        this.drawingControlPanel(options, modelWithVisibleElements, listTeams, heightOfTheShape, numberOfVisibleLevels);
+                        this.drawControlPanel(options, modelWithVisibleElements, listTeams, heightOfTheShape, numberOfVisibleLevels);
                     };
-                    DrawControlPanel.prototype.scrollButtonLeft = function (options, modelWithVisibleElements, listTeams, heightOfTheShape, numberOfVisibleLevels, isBottom, newModel) {
+                    DrawControlPanel.prototype.scrollButtonLeft = function (listTeams, isBottom, newModel) {
                         var _this = this;
-                        Visual.nameTextValue = Visual.barGroup.append("text")
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.nameTextValue = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup.append("path")
                             .classed("nameTextValue", true);
                         var yCoordinate = 0;
                         if (isBottom) {
-                            yCoordinate = 5 + 6 * Visual.fontLegendSize / 10;
+                            yCoordinate = 5 + 6 * chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.fontLegendSize / 10;
                         }
                         else {
-                            yCoordinate = Visual.visualWindowHeight - 6 * Visual.fontLegendSize / 10 - 45;
+                            yCoordinate = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowHeight - 6 * chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.fontLegendSize / 10 - 45;
                         }
-                        if ((Visual.showWarning) && (Visual.isWarning)) {
+                        if ((chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.showWarning) && (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isWarning)) {
                             yCoordinate = yCoordinate + 40;
                         }
                         var xCoordinateButton = 6;
-                        if (Visual.showLegendTitle) {
+                        if (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.showLegendTitle) {
                             xCoordinateButton = DrawControlPanel.xStartCoordinate - 10;
                         }
-                        Visual.nameTextValue
-                            .text("<")
-                            .attr({
-                            x: xCoordinateButton,
-                            y: yCoordinate,
-                            dy: "0.35em",
-                            "text-anchor": "middle"
-                        }).style("font-size", 25 + "px")
-                            .style("font-family", "cursive")
-                            .style("text-align", "left")
+                        var image = "M" + xCoordinateButton + "," + yCoordinate + "," + "L" + (xCoordinateButton + 6) + "," + (yCoordinate - 7) + "L" + (xCoordinateButton + 6) + "," + +(yCoordinate + 7) + "Z";
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.nameTextValue
+                            .style("fill", "black")
+                            .style("font-weight", "bold")
+                            .attr("d", image)
                             .on('click', function () {
-                            if (Visual.scrollLeft > 0) {
-                                Visual.scrollLeft--;
-                                Visual.scrollRight--;
-                                Visual.barGroup.selectAll(".controlPanel").remove();
-                                var radius = 5;
-                                var widthWindow = Visual.visualWindowWidth;
-                                var xCoordinate = radius * 4;
-                                if (Visual.showLegendTitle) {
-                                    xCoordinate = DrawControlPanel.xStartCoordinate;
-                                }
-                                var yCircleCoordinate = radius * 1.2;
-                                if (isBottom) {
-                                    yCircleCoordinate = 5 + 6 * Visual.fontLegendSize / 10;
-                                }
-                                else {
-                                    yCircleCoordinate = Visual.visualWindowHeight - 6 * Visual.fontLegendSize / 10 - 45;
-                                }
-                                if ((Visual.showWarning) && (Visual.isWarning)) {
-                                    yCircleCoordinate = yCircleCoordinate + 40;
-                                }
-                                for (var i = Visual.scrollLeft; i < Visual.scrollRight; i++) {
-                                    if ((listTeams.teamModel[i].team != null) && (listTeams.teamModel[i].team != " ") && (listTeams.teamModel[i].team != "")) {
-                                        var color = listTeams.teamModel[i].color;
-                                        if (i < listTeams.teamModel.length) {
-                                            _this.drawingColorMarks(options, xCoordinate, yCircleCoordinate, radius, color, listTeams, i, newModel);
-                                            xCoordinate = xCoordinate + radius * 2;
-                                            var team = listTeams.teamModel[i].team.toString();
-                                            _this.drawingTextMarks(options, xCoordinate, yCircleCoordinate, team, radius, false, listTeams, i, newModel);
-                                            xCoordinate = xCoordinate + team.length * 4 * Visual.fontLegendSize / 5 + 7;
-                                        }
-                                    }
-                                }
+                            if (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.scrollLeft > 0) {
+                                chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.scrollLeft--;
+                                chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.scrollRight--;
+                                _this.clickOnLegendBtnScroll(isBottom, listTeams, newModel);
                             }
                         });
                     };
-                    DrawControlPanel.prototype.scrollButtonRight = function (options, modelWithVisibleElements, listTeams, heightOfTheShape, numberOfVisibleLevels, isBottom, newModel) {
+                    DrawControlPanel.prototype.scrollButtonRight = function (listTeams, isBottom, newModel) {
                         var _this = this;
-                        Visual.nameTextValue = Visual.barGroup.append("text")
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.nameTextValue = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup.append("path")
                             .classed("nameTextValue", true);
                         var yCoordinate = 0;
                         if (isBottom) {
-                            yCoordinate = 5 + 6 * Visual.fontLegendSize / 10;
+                            yCoordinate = 5 + 6 * chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.fontLegendSize / 10;
                         }
                         else {
-                            yCoordinate = Visual.visualWindowHeight - 6 * Visual.fontLegendSize / 10 - 45;
+                            yCoordinate = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowHeight - 6 * chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.fontLegendSize / 10 - 45;
                         }
-                        if ((Visual.showWarning) && (Visual.isWarning)) {
+                        if ((chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.showWarning) && (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isWarning)) {
                             yCoordinate = yCoordinate + 40;
                         }
-                        Visual.nameTextValue
-                            .text(">")
-                            .attr({
-                            x: Visual.visualWindowWidth - 6,
-                            y: yCoordinate,
-                            dy: "0.35em",
-                            "text-anchor": "middle"
-                        }).style("font-size", 25 + "px")
-                            .style("font-family", "cursive")
-                            .style("text-align", "left")
+                        var image = "M" + (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth - 6) + "," + yCoordinate + "," + "L" + (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth - 12)
+                            + "," + (yCoordinate - 7) + "L" + (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth - 12) + "," + +(yCoordinate + 7) + "Z";
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.nameTextValue
+                            .style("fill", "black")
+                            .style("font-weight", "bold")
+                            .attr("d", image)
                             .on('click', function () {
-                            if (Visual.scrollRight < listTeams.teamModel.length) {
-                                Visual.scrollRight++;
-                                Visual.scrollLeft++;
-                                Visual.barGroup.selectAll(".controlPanel").remove();
-                                var radius = 5;
-                                var widthWindow = Visual.visualWindowWidth;
-                                var xCoordinate = radius * 4;
-                                if (Visual.showLegendTitle) {
-                                    xCoordinate = DrawControlPanel.xStartCoordinate;
-                                }
-                                var yCircleCoordinate = radius * 1.2;
-                                if (isBottom) {
-                                    yCircleCoordinate = 5 + 6 * Visual.fontLegendSize / 10;
-                                }
-                                else {
-                                    yCircleCoordinate = Visual.visualWindowHeight - 6 * Visual.fontLegendSize / 10 - 45;
-                                }
-                                if ((Visual.showWarning) && (Visual.isWarning)) {
-                                    yCircleCoordinate = yCircleCoordinate + 40;
-                                }
-                                for (var i = Visual.scrollLeft; i < Visual.scrollRight; i++) {
-                                    if ((listTeams.teamModel[i].team != null) && (listTeams.teamModel[i].team != " ") && (listTeams.teamModel[i].team != "")) {
-                                        var color = listTeams.teamModel[i].color;
-                                        if (i < listTeams.teamModel.length) {
-                                            _this.drawingColorMarks(options, xCoordinate, yCircleCoordinate, radius, color, listTeams, i, newModel);
-                                            xCoordinate = xCoordinate + radius * 2;
-                                            var team = listTeams.teamModel[i].team.toString();
-                                            _this.drawingTextMarks(options, xCoordinate, yCircleCoordinate, team, radius, false, listTeams, i, newModel);
-                                            xCoordinate = xCoordinate + team.length * 4 * Visual.fontLegendSize / 5 + 7;
-                                        }
-                                    }
-                                }
+                            if (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.scrollRight < listTeams.teamModel.length) {
+                                chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.scrollRight++;
+                                chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.scrollLeft++;
+                                _this.clickOnLegendBtnScroll(isBottom, listTeams, newModel);
                             }
                         });
                     };
-                    DrawControlPanel.prototype.drawingMarksAuto = function (options, listTeams, heightOfTheShape, newModel) {
+                    //drawing of a legend in automatic mode
+                    DrawControlPanel.prototype.drawingMarksAuto = function (listTeams, heightOfTheShape, newModel) {
                         var radius = heightOfTheShape / (listTeams.teamModel.length * 1.5);
-                        var widthWindow = Visual.visualWindowWidth;
+                        var widthWindow = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth;
                         var xCircleCoordinate = radius * 1.2;
                         var yCircleCoordinate = radius * 1.5;
                         var yCircleCoordinateForTheSecondHalf = radius * 1.5;
-                        if ((Visual.showWarning) && (Visual.isWarning)) {
+                        if ((chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.showWarning) && (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isWarning)) {
                             yCircleCoordinateForTheSecondHalf = yCircleCoordinateForTheSecondHalf + 40;
                             yCircleCoordinate = yCircleCoordinate + 40;
                         }
@@ -4209,69 +4125,70 @@ var powerbi;
                             if ((listTeams.teamModel[i].team != null) && (listTeams.teamModel[i].team != " ") && (listTeams.teamModel[i].team != "")) {
                                 var color = listTeams.teamModel[i].color;
                                 if (i < (listTeams.teamModel.length / 2)) {
-                                    this.drawingColorMarks(options, xCircleCoordinate, yCircleCoordinate, radius, color, listTeams, i, newModel);
-                                    this.drawingTextMarksAuto(options, xCircleCoordinate + radius * 2, yCircleCoordinate, listTeams.teamModel[i].team, radius, true);
+                                    this.drawingColorMarks(xCircleCoordinate, yCircleCoordinate, radius, color, listTeams, i, newModel);
+                                    this.drawingTextMarksAuto(xCircleCoordinate + radius * 2, yCircleCoordinate, listTeams, true, i, newModel);
                                     yCircleCoordinate = yCircleCoordinate + radius * 2.5;
                                 }
                                 else {
                                     xCircleCoordinate = widthWindow - radius * 1.2;
-                                    this.drawingColorMarks(options, xCircleCoordinate, yCircleCoordinateForTheSecondHalf, radius, color, listTeams, i, newModel);
-                                    this.drawingTextMarksAuto(options, Visual.visualWindowWidth - radius * 3, yCircleCoordinateForTheSecondHalf, listTeams.teamModel[i].team, radius, false);
+                                    this.drawingColorMarks(xCircleCoordinate, yCircleCoordinateForTheSecondHalf, radius, color, listTeams, i, newModel);
+                                    this.drawingTextMarksAuto(chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth - radius * 3, yCircleCoordinateForTheSecondHalf, listTeams, false, i, newModel);
                                     yCircleCoordinateForTheSecondHalf = yCircleCoordinateForTheSecondHalf + radius * 2.5;
                                 }
                             }
                         }
                     };
-                    DrawControlPanel.prototype.drawingMarks = function (options, listTeams, heightOfTheShape, newModel, isBottom) {
+                    //drawing of a legend in the upper and lower position
+                    DrawControlPanel.prototype.drawingMarks = function (listTeams, isBottom, newModel) {
                         var radius = 5;
-                        var widthWindow = Visual.visualWindowWidth;
                         var xCoordinate = radius * 4;
                         var yCircleCoordinate = radius * 1.2;
                         if (isBottom) {
-                            yCircleCoordinate = 5 + radius * 1.2 * Visual.fontLegendSize / 10;
+                            yCircleCoordinate = 5 + radius * 1.2 * chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.fontLegendSize / 10;
                         }
                         else {
-                            yCircleCoordinate = Visual.visualWindowHeight - radius * 1.2 * Visual.fontLegendSize / 10 - 45;
+                            yCircleCoordinate = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowHeight - radius * 1.2 * chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.fontLegendSize / 10 - 45;
                         }
-                        if ((Visual.showWarning) && (Visual.isWarning)) {
+                        if ((chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.showWarning) && (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isWarning)) {
                             yCircleCoordinate = yCircleCoordinate + 40;
                         }
-                        if (Visual.showLegendTitle) {
-                            this.drawingTextMarks(options, xCoordinate, yCircleCoordinate, Visual.titleLegend, radius, true, listTeams, 0, newModel);
-                            xCoordinate = xCoordinate + Visual.titleLegend.length * 6 * Visual.fontLegendSize / 5;
+                        if (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.showLegendTitle) {
+                            this.drawingTextMarks(xCoordinate, yCircleCoordinate, chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.titleLegend, radius, true, listTeams, 0, newModel);
+                            xCoordinate = xCoordinate + chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.titleLegend.length * 6 * chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.fontLegendSize / 5;
                             DrawControlPanel.xStartCoordinate = xCoordinate;
                         }
                         DrawControlPanel.displayScroll = false;
-                        for (var i = Visual.scrollLeft; i < Visual.scrollRight; i++) {
+                        for (var i = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.scrollLeft; i < chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.scrollRight; i++) {
                             if ((listTeams.teamModel[i].team != null) && (listTeams.teamModel[i].team != " ") && (listTeams.teamModel[i].team != "")) {
                                 var color = listTeams.teamModel[i].color;
                                 if (i < listTeams.teamModel.length) {
-                                    this.drawingColorMarks(options, xCoordinate, yCircleCoordinate, radius, color, listTeams, i, newModel);
+                                    this.drawingColorMarks(xCoordinate, yCircleCoordinate, radius, color, listTeams, i, newModel);
                                     xCoordinate = xCoordinate + radius * 2;
                                     var team = listTeams.teamModel[i].team.toString();
-                                    this.drawingTextMarks(options, xCoordinate, yCircleCoordinate, team, radius, false, listTeams, i, newModel);
-                                    xCoordinate = xCoordinate + team.length * 4 * Visual.fontLegendSize / 5 + 7;
+                                    this.drawingTextMarks(xCoordinate, yCircleCoordinate, team, radius, false, listTeams, i, newModel);
+                                    xCoordinate = xCoordinate + team.length * 4 * chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.fontLegendSize / 5 + 7;
                                 }
-                                if ((xCoordinate < Visual.visualWindowWidth - 50) && (Visual.scrollRight < listTeams.teamModel.length)) {
-                                    Visual.scrollRight++;
+                                if ((xCoordinate < chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth - 50) && (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.scrollRight < listTeams.teamModel.length)) {
+                                    chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.scrollRight++;
                                 }
-                                if ((xCoordinate > Visual.visualWindowWidth - 50)) {
+                                if ((xCoordinate > chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth - 50)) {
                                     DrawControlPanel.displayScroll = true;
                                 }
                             }
                             else {
-                                if ((xCoordinate < Visual.visualWindowWidth - 50) && (Visual.scrollRight < listTeams.teamModel.length)) {
-                                    Visual.scrollRight++;
+                                if ((xCoordinate < chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth - 50) && (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.scrollRight < listTeams.teamModel.length)) {
+                                    chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.scrollRight++;
                                 }
                             }
                         }
-                        Visual.scrollRight--;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.scrollRight--;
                     };
-                    DrawControlPanel.prototype.drawingColorMarks = function (options, xCircleCoordinate, yCircleCoordinate, radius, color, listTeams, i, newModel) {
+                    //circles on the legend
+                    DrawControlPanel.prototype.drawingColorMarks = function (xCircleCoordinate, yCircleCoordinate, radius, color, listTeams, i, newModel) {
                         var _this = this;
-                        Visual.circle = Visual.barGroup.append("circle")
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.circle = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup.append("circle")
                             .classed('circle', true).classed("team" + listTeams.teamModel[i].teamId, true).classed("controlPanel", true);
-                        Visual.circle
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.circle
                             .style("fill", color)
                             .style("stroke", "black")
                             .style("stroke-width", 1)
@@ -4280,39 +4197,12 @@ var powerbi;
                             cx: xCircleCoordinate,
                             cy: yCircleCoordinate
                         })
-                            .on('click', function () {
-                            if (listTeams.teamModel[i].boolSelectionIds) {
-                                listTeams.teamModel[i].boolSelectionIds = false;
+                            .on("click", function () {
+                            if (d3.event.ctrlKey) {
+                                _this.selectMultipleEventLegend(listTeams, i, newModel);
                             }
                             else {
-                                listTeams.teamModel[i].boolSelectionIds = true;
-                            }
-                            if (_this.determinationOfBoolSelectionIdTeam(listTeams)) {
-                                Visual.barGroup
-                                    .selectAll(".rectangle")
-                                    .style('opacity', 0.5);
-                                Visual.barGroup
-                                    .selectAll(".circle")
-                                    .style('opacity', 0.5);
-                                for (var j = 0; j < listTeams.teamModel.length; j++) {
-                                    if (listTeams.teamModel[j].boolSelectionIds) {
-                                        Visual.barGroup
-                                            .selectAll(".team" + listTeams.teamModel[j].teamId)
-                                            .style('opacity', 1);
-                                    }
-                                }
-                                listTeams.teamModel[i].selectionIds.forEach(function (selectionId) {
-                                    Visual.selectionManager.select(selectionId, true);
-                                });
-                            }
-                            else {
-                                Visual.selectionManager.clear();
-                                Visual.barGroup
-                                    .selectAll(".rectangle")
-                                    .style('opacity', 1);
-                                Visual.barGroup
-                                    .selectAll(".circle")
-                                    .style('opacity', 1);
+                                _this.selectSingleEvent(i, listTeams, newModel);
                             }
                         });
                     };
@@ -4321,15 +4211,14 @@ var powerbi;
                         for (var i = 0; i < listTeams.teamModel.length; i++) {
                             if (listTeams.teamModel[i].boolSelectionIds) {
                                 isSelectedTeam = true;
+                                break;
                             }
                         }
                         return isSelectedTeam;
                     };
-                    DrawControlPanel.prototype.drawingTextMarks = function (options, xCircleCoordinate, yCircleCoordinate, team, radius, isHeading, listTeams, i, newModel) {
+                    //text on the legend
+                    DrawControlPanel.prototype.drawingTextMarks = function (xCircleCoordinate, yCircleCoordinate, team, radius, isHeading, listTeams, i, newModel) {
                         var _this = this;
-                        var calculationsForDrawing = new CalculationsForDrawing();
-                        CalculationsForDrawing;
-                        var fontSize = calculationsForDrawing.definitionOfTheSmallestValue(radius * 2.5, Visual.visualWindowWidth / 60);
                         var className = "";
                         if (!isHeading) {
                             className = "controlPanel";
@@ -4337,56 +4226,31 @@ var powerbi;
                         else {
                             className = "isHeading";
                         }
-                        Visual.nameTextValue = Visual.barGroup.append("text")
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.nameTextValue = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup.append("text")
                             .classed("nameTextValue", true).classed(className, true);
-                        Visual.nameTextValue
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.nameTextValue
                             .text(team)
                             .attr({
                             x: xCircleCoordinate,
                             y: yCircleCoordinate,
                             dy: "0.35em",
-                        }).style("font-size", Visual.fontLegendSize + "px")
-                            .style("fill", Visual.colorLegend)
+                        }).style("font-size", chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.fontLegendSize + "px")
+                            .style("fill", chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.colorLegend)
                             .style("opacity ", "0.9")
                             .style("position", "relative")
                             .style("text-align", "left")
-                            .on('click', function () {
-                            if (listTeams.teamModel[i].boolSelectionIds) {
-                                listTeams.teamModel[i].boolSelectionIds = false;
+                            .on("click", function () {
+                            if (d3.event.ctrlKey) {
+                                _this.selectMultipleEventLegend(listTeams, i, newModel);
                             }
                             else {
-                                listTeams.teamModel[i].boolSelectionIds = true;
-                            }
-                            if (_this.determinationOfBoolSelectionIdTeam(listTeams)) {
-                                Visual.barGroup
-                                    .selectAll(".rectangle")
-                                    .style('opacity', 0.5);
-                                Visual.barGroup
-                                    .selectAll(".circle")
-                                    .style('opacity', 0.5);
-                                for (var j = 0; j < listTeams.teamModel.length; j++) {
-                                    if (listTeams.teamModel[j].boolSelectionIds) {
-                                        Visual.barGroup
-                                            .selectAll(".team" + listTeams.teamModel[j].teamId)
-                                            .style('opacity', 1);
-                                    }
-                                }
-                                listTeams.teamModel[i].selectionIds.forEach(function (selectionId) {
-                                    Visual.selectionManager.select(selectionId, true);
-                                });
-                            }
-                            else {
-                                Visual.selectionManager.clear();
-                                Visual.barGroup
-                                    .selectAll(".rectangle")
-                                    .style('opacity', 1);
-                                Visual.barGroup
-                                    .selectAll(".circle")
-                                    .style('opacity', 1);
+                                _this.selectSingleEvent(i, listTeams, newModel);
                             }
                         });
                     };
-                    DrawControlPanel.prototype.drawingTextMarksAuto = function (options, xCircleCoordinate, yCircleCoordinate, team, radius, position) {
+                    //text on the legend in automatic mode
+                    DrawControlPanel.prototype.drawingTextMarksAuto = function (xCircleCoordinate, yCircleCoordinate, listTeams, position, i, newModel) {
+                        var _this = this;
                         var textAnchor;
                         if (position) {
                             textAnchor = "start";
@@ -4394,69 +4258,214 @@ var powerbi;
                         else {
                             textAnchor = "end";
                         }
-                        var calculationsForDrawing = new CalculationsForDrawing();
-                        CalculationsForDrawing;
-                        var fontSize = calculationsForDrawing.definitionOfTheSmallestValue(radius * 2.5, Visual.visualWindowWidth / 60);
-                        Visual.nameTextValue = Visual.barGroup.append("text")
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.nameTextValue = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup.append("text")
                             .classed("nameTextValue", true);
-                        Visual.nameTextValue
-                            .text(team)
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.nameTextValue
+                            .text(listTeams.teamModel[i].team)
                             .attr({
                             x: xCircleCoordinate,
                             y: yCircleCoordinate,
                             dy: "0.35em",
                             "text-anchor": textAnchor
-                        }).style("font-size", Visual.fontLegendSize)
+                        }).style("font-size", chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.fontLegendSize)
                             .style("text-align", "left")
-                            .style("fill", Visual.colorLegend);
+                            .style("fill", chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.colorLegend)
+                            .on("click", function () {
+                            if (d3.event.ctrlKey) {
+                                _this.selectMultipleEventLegend(listTeams, i, newModel);
+                            }
+                            else {
+                                _this.selectSingleEvent(i, listTeams, newModel);
+                            }
+                        });
+                    };
+                    //click on empty space, reset selected id
+                    DrawControlPanel.prototype.resetSelectedItems = function (options, newModel, listTeams) {
+                        var _this = this;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.backgroundWindow.append("rect")
+                            .style("fill", "white")
+                            .attr({
+                            x: 0,
+                            y: 0,
+                            width: options.viewport.width,
+                            height: options.viewport.height
+                        })
+                            .on('click', function () {
+                            _this.resetAllSelectedItems(listTeams, newModel);
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.selectionManager.clear();
+                            _this.changeVisiblElements(1);
+                        });
+                    };
+                    //click events on any element of the legend withOut Ctrl
+                    DrawControlPanel.prototype.selectSingleEvent = function (i, listTeams, newModel) {
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.selectionManager.clear();
+                        if (listTeams.teamModel[i].boolSelectionIds) {
+                            listTeams.teamModel[i].boolSelectionIds = false;
+                            this.resetAllSelectedItems(listTeams, newModel);
+                            this.changeVisiblElements(1);
+                        }
+                        else {
+                            this.resetAllSelectedItems(listTeams, newModel);
+                            listTeams.teamModel[i].boolSelectionIds = true;
+                            this.changeVisiblElements(0.5);
+                            listTeams.teamModel[i].selectionIds.forEach(function (selectionId) {
+                                chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.selectionManager.select(selectionId, true);
+                            });
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
+                                .selectAll(".team" + listTeams.teamModel[i].teamId)
+                                .style('opacity', 1);
+                        }
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.makeSingleEvent = true;
+                    };
+                    //click events on any element of the legend with Ctrl
+                    DrawControlPanel.prototype.selectMultipleEventLegend = function (listTeams, i, newModel) {
+                        if (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.makeSingleEvent) {
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.selectionManager.clear();
+                            this.resetAllSelectedItems(listTeams, newModel);
+                        }
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.makeSingleEvent = false;
+                        if (listTeams.teamModel[i].boolSelectionIds) {
+                            listTeams.teamModel[i].boolSelectionIds = false;
+                        }
+                        else {
+                            listTeams.teamModel[i].boolSelectionIds = true;
+                        }
+                        var drawElements = new chart6F792A8745784877BCD8F4ACA5AD4207.DrawElements();
+                        if ((this.determinationOfBoolSelectionIdTeam(listTeams)) || drawElements.determinationOfBoolSelectionId(newModel)) {
+                            this.changeVisiblElements(0.5);
+                            for (var j = 0; j < listTeams.teamModel.length; j++) {
+                                if (listTeams.teamModel[j].boolSelectionIds) {
+                                    chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
+                                        .selectAll(".team" + listTeams.teamModel[j].teamId)
+                                        .style('opacity', 1);
+                                }
+                            }
+                            for (var i_1 = 0; i_1 < newModel.dataPoints.length; i_1++) {
+                                if (newModel.dataPoints[i_1].boolSelectionId) {
+                                    chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
+                                        .selectAll(".id" + newModel.dataPoints[i_1].id)
+                                        .style('opacity', 1);
+                                }
+                            }
+                            listTeams.teamModel[i].selectionIds.forEach(function (selectionId) {
+                                chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.selectionManager.select(selectionId, true);
+                            });
+                        }
+                        else {
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.selectionManager.clear();
+                            this.changeVisiblElements(1);
+                            this.resetAllSelectedItems(listTeams, newModel);
+                        }
+                    };
+                    //click event on the legend scroll button
+                    DrawControlPanel.prototype.clickOnLegendBtnScroll = function (isBottom, listTeams, newModel) {
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup.selectAll(".controlPanel").remove();
+                        var radius = 5;
+                        var widthWindow = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth;
+                        var xCoordinate = radius * 4;
+                        if (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.showLegendTitle) {
+                            xCoordinate = DrawControlPanel.xStartCoordinate;
+                        }
+                        var yCircleCoordinate = radius * 1.2;
+                        if (isBottom) {
+                            yCircleCoordinate = 5 + 6 * chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.fontLegendSize / 10;
+                        }
+                        else {
+                            yCircleCoordinate = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowHeight - 6 * chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.fontLegendSize / 10 - 45;
+                        }
+                        if ((chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.showWarning) && (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isWarning)) {
+                            yCircleCoordinate = yCircleCoordinate + 40;
+                        }
+                        for (var i = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.scrollLeft; i < chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.scrollRight; i++) {
+                            if ((listTeams.teamModel[i].team != null) && (listTeams.teamModel[i].team != " ") && (listTeams.teamModel[i].team != "")) {
+                                var color = listTeams.teamModel[i].color;
+                                if (i < listTeams.teamModel.length) {
+                                    this.drawingColorMarks(xCoordinate, yCircleCoordinate, radius, color, listTeams, i, newModel);
+                                    xCoordinate = xCoordinate + radius * 2;
+                                    var team = listTeams.teamModel[i].team.toString();
+                                    this.drawingTextMarks(xCoordinate, yCircleCoordinate, team, radius, false, listTeams, i, newModel);
+                                    xCoordinate = xCoordinate + team.length * 4 * chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.fontLegendSize / 5 + 7;
+                                }
+                            }
+                        }
+                    };
+                    DrawControlPanel.prototype.changeVisiblElements = function (opacity) {
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
+                            .selectAll(".rectangle")
+                            .style('opacity', opacity);
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
+                            .selectAll(".circle")
+                            .style('opacity', opacity);
+                    };
+                    DrawControlPanel.prototype.resetAllSelectedItems = function (listTeams, newModel) {
+                        for (var j = 0; j < listTeams.teamModel.length; j++) {
+                            listTeams.teamModel[j].boolSelectionIds = false;
+                        }
+                        for (var i = 0; i < newModel.dataPoints.length; i++) {
+                            newModel.dataPoints[i].boolSelectionId = false;
+                        }
                     };
                     return DrawControlPanel;
                 }());
                 DrawControlPanel.xStartCoordinate = 0;
                 DrawControlPanel.displayScroll = false;
+                chart6F792A8745784877BCD8F4ACA5AD4207.DrawControlPanel = DrawControlPanel;
+            })(chart6F792A8745784877BCD8F4ACA5AD4207 = visual.chart6F792A8745784877BCD8F4ACA5AD4207 || (visual.chart6F792A8745784877BCD8F4ACA5AD4207 = {}));
+        })(visual = extensibility.visual || (extensibility.visual = {}));
+    })(extensibility = powerbi.extensibility || (powerbi.extensibility = {}));
+})(powerbi || (powerbi = {}));
+var powerbi;
+(function (powerbi) {
+    var extensibility;
+    (function (extensibility) {
+        var visual;
+        (function (visual) {
+            var chart6F792A8745784877BCD8F4ACA5AD4207;
+            (function (chart6F792A8745784877BCD8F4ACA5AD4207) {
+                //class responsible for drawing nodes and their events
                 var DrawElements = (function () {
                     function DrawElements() {
                     }
                     DrawElements.prototype.drawingElements = function (options, newModel, listTeams, numberOfVisibleLevels) {
-                        Visual.svg.attr({
-                            width: Visual.visualWindowWidth,
-                            height: Visual.visualWindowHeight
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.svg.attr({
+                            width: chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth,
+                            height: chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowHeight
                         });
                         var widthOfTheShape = 0;
                         var heightOfTheShape = 0;
-                        var windowHeight = Visual.visualWindowHeight - 100;
-                        var calculationsForDrawing = new CalculationsForDrawing();
-                        heightOfTheShape = calculationsForDrawing.calculatingTheHeightOfShape(windowHeight);
-                        heightOfTheShape = calculationsForDrawing.definitionOfTheSmallestValue(heightOfTheShape, windowHeight / 5);
-                        widthOfTheShape = calculationsForDrawing.calculatingTheWidthOfShape(Visual.visualWindowWidth, newModel.dataPoints[0].elementWeight);
-                        widthOfTheShape = calculationsForDrawing.definitionOfTheSmallestValue(widthOfTheShape, Visual.visualWindowWidth / 5);
-                        var isHeightGreaterThanWidth = calculationsForDrawing.definitionOfTheLargerValue(heightOfTheShape, widthOfTheShape);
-                        if (Visual.displayHeightAndWidth) {
-                            heightOfTheShape = Visual.customShapeHeight;
-                            widthOfTheShape = Visual.customShapeWidth;
+                        var windowHeight = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowHeight - 100;
+                        var calculationsForDrawing = new chart6F792A8745784877BCD8F4ACA5AD4207.CalculationsForDrawing();
+                        heightOfTheShape = calculationsForDrawing.calcHeightShape(windowHeight);
+                        heightOfTheShape = calculationsForDrawing.searchSmallestValue(heightOfTheShape, windowHeight / 5);
+                        widthOfTheShape = calculationsForDrawing.calcWidthShape(chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth, newModel.dataPoints[0].elementWeight);
+                        widthOfTheShape = calculationsForDrawing.searchSmallestValue(widthOfTheShape, chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth / 5);
+                        var isHeightGreaterThanWidth = calculationsForDrawing.searchLargerValue(heightOfTheShape, widthOfTheShape);
+                        if (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.displayHeightAndWidth) {
+                            heightOfTheShape = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.customShapeHeight;
+                            widthOfTheShape = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.customShapeWidth;
                         }
-                        Visual.widthOfTheShape = widthOfTheShape;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.widthOfTheShape = widthOfTheShape;
                         var fontSizeValue = heightOfTheShape / 7;
                         var xCenterCoordinate = 0;
                         var yCenterCoordinate;
-                        if ((Visual.legend == "0") && (Visual.showLegend)) {
-                            yCenterCoordinate = 10 + heightOfTheShape + (heightOfTheShape / 2) * Visual.fontLegendSize / 20;
+                        if ((chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.legend == "0") && (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.showLegend)) {
+                            yCenterCoordinate = 10 + heightOfTheShape + (heightOfTheShape / 2) * chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.fontLegendSize / 20;
                         }
                         else {
                             yCenterCoordinate = heightOfTheShape + (heightOfTheShape / 7);
                         }
-                        if ((Visual.showWarning) && (Visual.isWarning)) {
+                        if ((chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.showWarning) && (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isWarning)) {
                             yCenterCoordinate = yCenterCoordinate + 50;
                         }
                         var gapWidth = widthOfTheShape * 1.2 - widthOfTheShape;
                         var gapHeight = heightOfTheShape / 1.3;
-                        var minX = (Visual.visualWindowWidth / Visual.maximumElementWeight) - gapWidth;
+                        var minX = (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth / chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.maxElemWeight) - gapWidth;
                         var currentLevel = 0;
                         var parent;
                         var oldParent = "-";
                         var xAddValueCoordinate = 0;
                         var predAdd = 0;
-                        while (currentLevel <= Visual.numberOfLevelsThatIsVisible) {
+                        while (currentLevel <= chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbVisibleLevls) {
                             for (var i = 0; i < newModel.dataPoints.length; i++) {
                                 if ((newModel.dataPoints[i].lvl === currentLevel) && (newModel.dataPoints[i].isVisible)) {
                                     parent = newModel.dataPoints[i].reportTo;
@@ -4469,8 +4478,8 @@ var powerbi;
                                         }
                                     }
                                     newModel.dataPoints[i].parentStartX = xCenterCoordinate + predAdd;
-                                    if (((parent == " ") || (parent == "")) && (Visual.numberOfLevelsThatIsVisible == 1)) {
-                                        xAddValueCoordinate = Visual.visualWindowWidth / 2;
+                                    if (((parent == " ") || (parent == "")) && (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbVisibleLevls == 1)) {
+                                        xAddValueCoordinate = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth / 2;
                                     }
                                     else {
                                         xAddValueCoordinate = ((minX + gapWidth) * newModel.dataPoints[i].elementWeight) / 2;
@@ -4479,18 +4488,18 @@ var powerbi;
                                     predAdd = xAddValueCoordinate;
                                     oldParent = parent;
                                     var color = calculationsForDrawing.colorDefinitionByCommand(newModel, i, listTeams);
-                                    if (Visual.shapeType) {
-                                        this.drawingEllipse(xCenterCoordinate, yCenterCoordinate, heightOfTheShape, widthOfTheShape, newModel, options, listTeams, color, numberOfVisibleLevels, newModel.dataPoints[i].lvl, i);
+                                    if (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.shapeType) {
+                                        this.drawingEllipse(xCenterCoordinate, yCenterCoordinate, heightOfTheShape, widthOfTheShape, newModel, listTeams, color, i);
                                     }
                                     else {
-                                        this.drawingRectangle(xCenterCoordinate, yCenterCoordinate, heightOfTheShape, widthOfTheShape, newModel, options, listTeams, color, numberOfVisibleLevels, newModel.dataPoints[i].lvl, i);
+                                        this.drawingRectangle(xCenterCoordinate, yCenterCoordinate, heightOfTheShape, widthOfTheShape, newModel, listTeams, color, i);
                                     }
                                     if (newModel.dataPoints[i].isHeirs) {
-                                        this.drawingExpandOrCollapseButton(xCenterCoordinate, yCenterCoordinate, heightOfTheShape, widthOfTheShape, newModel, options, listTeams, color, numberOfVisibleLevels, newModel.dataPoints[i].lvl, i);
+                                        this.drawingExpandOrCollapseButton(options, xCenterCoordinate, yCenterCoordinate, heightOfTheShape, widthOfTheShape, newModel, listTeams, color, numberOfVisibleLevels, newModel.dataPoints[i].lvl, i);
                                     }
-                                    var offsetValue = Visual.distanceBetweenTitleAndSubtitle;
-                                    this.drawingTitle(xCenterCoordinate, yCenterCoordinate, newModel.dataPoints[i].title, newModel, options, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels, newModel.dataPoints[i].lvl, isHeightGreaterThanWidth);
-                                    this.drawingSubtitle(xCenterCoordinate, yCenterCoordinate, newModel, options, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels, newModel.dataPoints[i].lvl, isHeightGreaterThanWidth);
+                                    var offsetValue = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.distanceBetweenTitleAndSubtitle;
+                                    this.drawingTitle(xCenterCoordinate, yCenterCoordinate, newModel.dataPoints[i].title, newModel, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels, newModel.dataPoints[i].lvl, isHeightGreaterThanWidth);
+                                    this.drawingSubtitle(xCenterCoordinate, yCenterCoordinate, newModel, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels, newModel.dataPoints[i].lvl, isHeightGreaterThanWidth);
                                     newModel.dataPoints[i].xCoordinate = xCenterCoordinate;
                                     newModel.dataPoints[i].yCoordinate = yCenterCoordinate;
                                 }
@@ -4505,22 +4514,23 @@ var powerbi;
                         }
                         return heightOfTheShape;
                     };
-                    DrawElements.prototype.drawingExpandOrCollapseButton = function (xCenterCoordinate, yCenterCoordinate, heightOfTheShape, widthOfTheShape, newModel, options, listTeams, color, numberOfVisibleLevels, lvl, i) {
+                    //method for drawing the circle of folding / unfolding nodes
+                    DrawElements.prototype.drawingExpandOrCollapseButton = function (options, xCenterCoordinate, yCenterCoordinate, heightOfTheShape, widthOfTheShape, newModel, listTeams, color, numberOfVisibleLevels, lvl, i) {
                         var _this = this;
                         var tempxCenterCoordinate = xCenterCoordinate;
                         var tempyCenterCoordinate = yCenterCoordinate;
-                        var calculationsForDrawing = new CalculationsForDrawing();
-                        var workWithTeams = new WorkWithTeams();
+                        var calculationsForDrawing = new chart6F792A8745784877BCD8F4ACA5AD4207.CalculationsForDrawing();
+                        var workWithTeams = new chart6F792A8745784877BCD8F4ACA5AD4207.WorkWithTeams();
                         var teamId = workWithTeams.joiningPersonsWithTeamId(newModel.dataPoints[i].team, listTeams);
                         var transparency = 1;
                         var isSelectedElements = this.determinationOfBoolSelectionId(newModel);
-                        if ((Visual.isExternalEventClick) || (isSelectedElements)) {
+                        if ((chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isExternalEventClick) || (isSelectedElements)) {
                             transparency = 0.5;
                         }
                         if (newModel.dataPoints[i].boolSelectionId) {
                             transparency = 1;
                         }
-                        Visual.circle = Visual.barGroup.append("circle")
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.circle = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup.append("circle")
                             .classed('circle', true).classed("team" + teamId, true).classed("id" + newModel.dataPoints[i].id, true);
                         var value = "+";
                         for (var j = 0; j < newModel.dataPoints.length; j++) {
@@ -4528,7 +4538,7 @@ var powerbi;
                                 value = "-";
                             }
                         }
-                        Visual.circle
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.circle
                             .style("fill", color)
                             .style("stroke", "black")
                             .style("opacity", transparency)
@@ -4540,11 +4550,11 @@ var powerbi;
                         })
                             .on('click', function () {
                             var nameOfTheParent = calculationsForDrawing.nameDeterminationByCoordinates(newModel, tempxCenterCoordinate, tempyCenterCoordinate);
-                            _this.clickEvent(newModel, options, nameOfTheParent, listTeams, numberOfVisibleLevels, i);
+                            _this.clickEvent(options, newModel, nameOfTheParent, listTeams, numberOfVisibleLevels, i);
                         });
-                        Visual.nameTextValue = Visual.barGroup.append("text")
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.nameTextValue = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup.append("text")
                             .classed("nameTextValue", true);
-                        Visual.nameTextValue
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.nameTextValue
                             .text(value)
                             .attr({
                             x: xCenterCoordinate,
@@ -4553,33 +4563,32 @@ var powerbi;
                         }).style("font-size", "19px")
                             .on('click', function () {
                             var nameOfTheParent = calculationsForDrawing.nameDeterminationByCoordinates(newModel, tempxCenterCoordinate, tempyCenterCoordinate);
-                            _this.clickEvent(newModel, options, nameOfTheParent, listTeams, numberOfVisibleLevels, i);
+                            _this.clickEvent(options, newModel, nameOfTheParent, listTeams, numberOfVisibleLevels, i);
                         });
                         if ((newModel.dataPoints[i].highlighted) || (newModel.dataPoints[i].boolSelectionId)) {
-                            Visual.rectangle.style("opacity", 1);
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.rectangle.style("opacity", 1);
                         }
                     };
-                    DrawElements.prototype.drawingEllipse = function (xCenterCoordinate, yCenterCoordinate, heightOfTheShape, widthOfTheShape, newModel, options, listTeams, color, numberOfVisibleLevels, lvl, i) {
+                    //If the user chooses that the nodes should be displayed by ellipses
+                    DrawElements.prototype.drawingEllipse = function (xCenterCoordinate, yCenterCoordinate, heightOfTheShape, widthOfTheShape, newModel, listTeams, color, i) {
                         var _this = this;
-                        var tempxCenterCoordinate = xCenterCoordinate;
-                        var tempyCenterCoordinate = yCenterCoordinate;
-                        var calculationsForDrawing = new CalculationsForDrawing();
-                        var workWithTeams = new WorkWithTeams();
+                        var calculationsForDrawing = new chart6F792A8745784877BCD8F4ACA5AD4207.CalculationsForDrawing();
+                        var workWithTeams = new chart6F792A8745784877BCD8F4ACA5AD4207.WorkWithTeams();
                         var teamId = workWithTeams.joiningPersonsWithTeamId(newModel.dataPoints[i].team, listTeams);
                         var transparency = 1;
                         var isSelectedElements = this.determinationOfBoolSelectionId(newModel);
-                        if ((Visual.isExternalEventClick) || (isSelectedElements)) {
+                        if ((chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isExternalEventClick) || (isSelectedElements)) {
                             transparency = 0.5;
-                            Visual.barGroup
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
                                 .selectAll(".circle")
                                 .style('opacity', 0.5);
-                            Visual.barGroup
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
                                 .selectAll(".id" + newModel.dataPoints[i].id)
                                 .style('opacity', 1);
                         }
-                        Visual.rectangle = Visual.barGroup.append("ellipse")
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.rectangle = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup.append("ellipse")
                             .classed('rectangle', true).classed("team" + teamId, true).classed("id" + newModel.dataPoints[i].id, true);
-                        Visual.rectangle
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.rectangle
                             .style("fill", color)
                             .style("opacity", transparency)
                             .style("stroke", "black")
@@ -4590,13 +4599,19 @@ var powerbi;
                             rx: widthOfTheShape / 2,
                             ry: heightOfTheShape / 2
                         })
-                            .on('click', function () {
-                            _this.selectEvent(newModel, i);
+                            .on("click", function () {
+                            if (d3.event.ctrlKey) {
+                                _this.selectMultipleEvent(newModel, i, listTeams);
+                            }
+                            else {
+                                _this.selectSingleEvent(newModel, i, listTeams);
+                            }
                         });
                         if ((newModel.dataPoints[i].highlighted) || (newModel.dataPoints[i].boolSelectionId)) {
-                            Visual.rectangle.style("opacity", 1);
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.rectangle.style("opacity", 1);
                         }
                     };
+                    //Are there any selected node?
                     DrawElements.prototype.determinationOfBoolSelectionId = function (newModel) {
                         var isSelectedElements = false;
                         for (var i = 0; i < newModel.dataPoints.length; i++) {
@@ -4606,27 +4621,34 @@ var powerbi;
                         }
                         return isSelectedElements;
                     };
-                    DrawElements.prototype.drawingRectangle = function (xCenterCoordinate, yCenterCoordinate, heightOfTheShape, widthOfTheShape, newModel, options, listTeams, color, numberOfVisibleLevels, lvl, i) {
+                    //If the user chooses that the nodes should be displayed by Rectangle
+                    DrawElements.prototype.drawingRectangle = function (xCenterCoordinate, yCenterCoordinate, heightOfTheShape, widthOfTheShape, newModel, listTeams, color, i) {
                         var _this = this;
-                        var tempxCenterCoordinate = xCenterCoordinate;
-                        var tempyCenterCoordinate = yCenterCoordinate;
-                        var calculationsForDrawing = new CalculationsForDrawing();
-                        var workWithTeams = new WorkWithTeams();
+                        var workWithTeams = new chart6F792A8745784877BCD8F4ACA5AD4207.WorkWithTeams();
                         var teamId = workWithTeams.joiningPersonsWithTeamId(newModel.dataPoints[i].team, listTeams);
                         var transparency = 1;
                         var isSelectedElements = this.determinationOfBoolSelectionId(newModel);
-                        if ((Visual.isExternalEventClick) || (isSelectedElements)) {
+                        var drawControlPanel = new chart6F792A8745784877BCD8F4ACA5AD4207.DrawControlPanel();
+                        var isSelectedTeams = drawControlPanel.determinationOfBoolSelectionIdTeam(listTeams);
+                        if ((chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isExternalEventClick) || (isSelectedElements) || (isSelectedTeams)) {
                             transparency = 0.5;
-                            Visual.barGroup
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
                                 .selectAll(".circle")
                                 .style('opacity', 0.5);
-                            Visual.barGroup
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
                                 .selectAll(".id" + newModel.dataPoints[i].id)
                                 .style('opacity', 1);
+                            for (var j = 0; j < listTeams.teamModel.length; j++) {
+                                if (listTeams.teamModel[j].boolSelectionIds) {
+                                    chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
+                                        .selectAll(".team" + listTeams.teamModel[j].teamId)
+                                        .style('opacity', 1);
+                                }
+                            }
                         }
-                        Visual.rectangle = Visual.barGroup.append("rect")
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.rectangle = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup.append("rect")
                             .classed('rectangle', true).classed("team" + teamId, true).classed("id" + newModel.dataPoints[i].id, true);
-                        Visual.rectangle
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.rectangle
                             .style("fill", color)
                             .style("opacity", transparency)
                             .style("stroke", "black")
@@ -4638,19 +4660,19 @@ var powerbi;
                             width: widthOfTheShape,
                             height: heightOfTheShape
                         })
-                            .on('click', function () {
-                            /*
-                            if () {
-                                console.log("mama");
+                            .on("click", function () {
+                            if (d3.event.ctrlKey) {
+                                _this.selectMultipleEvent(newModel, i, listTeams);
                             }
-                            */
-                            _this.selectEvent(newModel, i);
+                            else {
+                                _this.selectSingleEvent(newModel, i, listTeams);
+                            }
                         });
                         if ((newModel.dataPoints[i].highlighted) || (newModel.dataPoints[i].boolSelectionId)) {
-                            Visual.rectangle.style("opacity", 1);
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.rectangle.style("opacity", 1);
                         }
                     };
-                    DrawElements.prototype.drawingTitle = function (xCenterCoordinate, yCenterCoordinate, title, newModel, options, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels, lvl, isHeightGreaterThanWidth) {
+                    DrawElements.prototype.drawingTitle = function (xCenterCoordinate, yCenterCoordinate, title, newModel, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels, lvl, isHeightGreaterThanWidth) {
                         var _this = this;
                         var writingMode;
                         var xCoordinate;
@@ -4665,23 +4687,28 @@ var powerbi;
                             xCoordinate = xCenterCoordinate;
                             yCoordinate = yCenterCoordinate - fontSizeValue * 3 - offsetValue;
                         }
-                        Visual.nameTextValue = Visual.barGroup.append("text")
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.nameTextValue = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup.append("text")
                             .classed("nameTextValue", true);
-                        Visual.nameTextValue
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.nameTextValue
                             .text(title)
                             .attr({
                             x: xCoordinate,
                             y: yCoordinate,
                             //dy: "0.35 em",
                             "text-anchor": "middle"
-                        }).style("font-size", Visual.customFontSizeTitleInShape + "px")
-                            .style("fill", Visual.colorName)
+                        }).style("font-size", chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.customFontSizeTitle + "px")
+                            .style("fill", chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.colorName)
                             .style("writing-mode", writingMode)
-                            .on('click', function () {
-                            _this.selectEvent(newModel, i);
+                            .on("click", function () {
+                            if (d3.event.ctrlKey) {
+                                _this.selectMultipleEvent(newModel, i, listTeams);
+                            }
+                            else {
+                                _this.selectSingleEvent(newModel, i, listTeams);
+                            }
                         });
                     };
-                    DrawElements.prototype.drawingSubtitle = function (xCenterCoordinate, yCenterCoordinate, newModel, options, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels, lvl, isHeightGreaterThanWidth) {
+                    DrawElements.prototype.drawingSubtitle = function (xCenterCoordinate, yCenterCoordinate, newModel, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels, lvl, isHeightGreaterThanWidth) {
                         var _this = this;
                         var writingMode;
                         var xCoordinate;
@@ -4696,9 +4723,9 @@ var powerbi;
                             xCoordinate = xCenterCoordinate;
                             yCoordinate = yCenterCoordinate - fontSizeValue * 3 + offsetValue;
                         }
-                        Visual.subtitleTextValue = Visual.barGroup.append("text")
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.subtitleTextValue = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup.append("text")
                             .classed("subtitleTextValue", true);
-                        Visual.subtitleTextValue
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.subtitleTextValue
                             .text(newModel.dataPoints[i].position)
                             .attr({
                             x: xCoordinate,
@@ -4706,100 +4733,123 @@ var powerbi;
                             //dy: "0.35 em",
                             "text-anchor": "middle"
                         })
-                            .style("fill", Visual.colorName)
-                            .style("font-size", Visual.customFontSizeSubtitleInShape + "px")
+                            .style("fill", chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.colorName)
+                            .style("font-size", chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.customFontSizeSubtitle + "px")
                             .style("writing-mode", writingMode)
-                            .on('click', function () {
-                            _this.selectEvent(newModel, i);
+                            .on("click", function () {
+                            if (d3.event.ctrlKey) {
+                                _this.selectMultipleEvent(newModel, i, listTeams);
+                            }
+                            else {
+                                _this.selectSingleEvent(newModel, i, listTeams);
+                            }
                         });
                     };
-                    DrawElements.prototype.selectEvent = function (newModel, i) {
-                        Visual.selectionManager.select(newModel.dataPoints[i].selectionId, true);
+                    //highlighting selected nodes withOut Ctrl
+                    DrawElements.prototype.selectSingleEvent = function (newModel, i, listTeams) {
+                        var drawControlPanel = new chart6F792A8745784877BCD8F4ACA5AD4207.DrawControlPanel();
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.selectionManager.clear();
+                        if (!newModel.dataPoints[i].boolSelectionId) {
+                            drawControlPanel.resetAllSelectedItems(listTeams, newModel);
+                            newModel.dataPoints[i].boolSelectionId = true;
+                            drawControlPanel.changeVisiblElements(0.5);
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.selectionManager.select(newModel.dataPoints[i].selectionId, true);
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
+                                .selectAll(".id" + newModel.dataPoints[i].id)
+                                .style('opacity', 1);
+                        }
+                        else {
+                            drawControlPanel.resetAllSelectedItems(listTeams, newModel);
+                            drawControlPanel.changeVisiblElements(1);
+                        }
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.makeSingleEvent = true;
+                    };
+                    //highlighting selected nodes with Ctrl
+                    DrawElements.prototype.selectMultipleEvent = function (newModel, i, listTeams) {
+                        var drawControlPanel = new chart6F792A8745784877BCD8F4ACA5AD4207.DrawControlPanel();
+                        if (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.makeSingleEvent) {
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.selectionManager.clear();
+                            drawControlPanel.resetAllSelectedItems(listTeams, newModel);
+                        }
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.makeSingleEvent = false;
                         if (!newModel.dataPoints[i].boolSelectionId) {
                             newModel.dataPoints[i].boolSelectionId = true;
                         }
                         else {
                             newModel.dataPoints[i].boolSelectionId = false;
                         }
-                        var noSelected = true;
-                        for (var j = 0; j < newModel.dataPoints.length; j++) {
-                            if (newModel.dataPoints[j].boolSelectionId) {
-                                noSelected = false;
-                                Visual.barGroup
-                                    .selectAll(".rectangle")
-                                    .style('opacity', 0.5);
-                                Visual.barGroup
-                                    .selectAll(".circle")
-                                    .style('opacity', 0.5);
-                                break;
+                        if ((drawControlPanel.determinationOfBoolSelectionIdTeam(listTeams)) || this.determinationOfBoolSelectionId(newModel)) {
+                            drawControlPanel.changeVisiblElements(0.5);
+                            for (var j = 0; j < listTeams.teamModel.length; j++) {
+                                if (listTeams.teamModel[j].boolSelectionIds) {
+                                    chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
+                                        .selectAll(".team" + listTeams.teamModel[j].teamId)
+                                        .style('opacity', 1);
+                                }
                             }
+                            for (var i_2 = 0; i_2 < newModel.dataPoints.length; i_2++) {
+                                if (newModel.dataPoints[i_2].boolSelectionId) {
+                                    chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
+                                        .selectAll(".id" + newModel.dataPoints[i_2].id)
+                                        .style('opacity', 1);
+                                }
+                            }
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.selectionManager.select(newModel.dataPoints[i].selectionId, true);
                         }
-                        if (noSelected) {
-                            Visual.barGroup
-                                .selectAll(".rectangle")
-                                .style('opacity', 1);
-                            Visual.barGroup
-                                .selectAll(".circle")
-                                .style('opacity', 1);
-                            Visual.selectionManager.clear();
-                            for (var j = 0; j < newModel.dataPoints.length; j++) {
-                                newModel.dataPoints[j].boolSelectionId = false;
-                            }
-                        }
-                        for (var j = 0; j < newModel.dataPoints.length; j++) {
-                            var id = newModel.dataPoints[j].id;
-                            if (newModel.dataPoints[j].boolSelectionId) {
-                                Visual.barGroup
-                                    .selectAll(".id" + id)
-                                    .style('opacity', 1);
-                            }
+                        else {
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.selectionManager.clear();
+                            drawControlPanel.changeVisiblElements(1);
+                            drawControlPanel.resetAllSelectedItems(listTeams, newModel);
                         }
                     };
-                    DrawElements.prototype.clickEvent = function (newModel, options, nameOfTheParent, listTeams, numberOfVisibleLevels, i) {
+                    //collapsing event (folding / unfolding nodes)
+                    DrawElements.prototype.clickEvent = function (options, newModel, nameOfTheParent, listTeams, numberOfVisibleLevels, i) {
                         DrawElements.deletingOldShapes();
-                        Visual.scrollLeft = 0;
-                        Visual.scrollRight = 1;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.scrollLeft = 0;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.scrollRight = 1;
                         for (var j = 0; j < newModel.dataPoints.length; j++) {
                             if (newModel.dataPoints[i].id == newModel.dataPoints[j].reportTo) {
-                                Visual.isDependenciesVisible = newModel.dataPoints[j].isVisible;
+                                chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isDependenciesVisible = newModel.dataPoints[j].isVisible;
                             }
                         }
-                        var calculationsForDrawing = new CalculationsForDrawing();
-                        if (Visual.isDependenciesVisible) {
+                        var calculationsForDrawing = new chart6F792A8745784877BCD8F4ACA5AD4207.CalculationsForDrawing();
+                        if (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isDependenciesVisible) {
                             newModel = calculationsForDrawing.makingVisibleAndInVisibleHeir(newModel, nameOfTheParent, false);
-                            Visual.isDependenciesVisible = false;
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isDependenciesVisible = false;
                         }
                         else {
                             newModel = calculationsForDrawing.makingVisibleAndInVisibleHeir(newModel, nameOfTheParent, true);
-                            Visual.isDependenciesVisible = true;
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isDependenciesVisible = true;
                         }
-                        calculationsForDrawing.findLevelsThatIsVisible(newModel);
-                        calculationsForDrawing.numberOfElementsOnEachLevelThatIsVisible(newModel);
-                        newModel = calculationsForDrawing.calculationOfWeightingCoefficients(newModel);
+                        calculationsForDrawing.numbElemOnEachLevl(newModel);
+                        calculationsForDrawing.findVisibleLevels(newModel);
+                        calculationsForDrawing.countVisibleElemOnEachLevel(newModel);
+                        newModel = calculationsForDrawing.calcOfWeightCof(newModel);
                         var heightOfTheShape = this.drawingElements(options, newModel, listTeams, numberOfVisibleLevels);
                         this.drawingRelationships(newModel, heightOfTheShape);
-                        var drawControlPanel = new DrawControlPanel();
-                        drawControlPanel.drawingControlPanel(options, newModel, listTeams, heightOfTheShape, numberOfVisibleLevels);
+                        var drawControlPanel = new chart6F792A8745784877BCD8F4ACA5AD4207.DrawControlPanel();
+                        drawControlPanel.drawControlPanel(options, newModel, listTeams, heightOfTheShape, numberOfVisibleLevels);
                     };
-                    DrawElements.prototype.drawingRelationships = function (options, heightOfTheShape) {
-                        var newModel = options;
+                    DrawElements.prototype.drawingRelationships = function (newModel, heightOfTheShape) {
                         var elementsOfTheCurrentLevel = 0;
                         var elementsOfTheNextLevel = elementsOfTheCurrentLevel + 1;
                         var mainCommunicationElementName;
                         var xConnectionCoordinate;
                         var yConnectionCoordinate;
-                        while (elementsOfTheCurrentLevel <= Visual.numberOfLevelsThatIsVisible) {
+                        while (elementsOfTheCurrentLevel <= chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbVisibleLevls) {
                             for (var i = 0; i < newModel.dataPoints.length; i++) {
                                 if ((newModel.dataPoints[i].lvl === elementsOfTheCurrentLevel) && (newModel.dataPoints[i].isVisible)) {
                                     mainCommunicationElementName = newModel.dataPoints[i].id;
                                     xConnectionCoordinate = newModel.dataPoints[i].xCoordinate;
                                     yConnectionCoordinate = newModel.dataPoints[i].yCoordinate;
                                     for (var j = 0; j < newModel.dataPoints.length; j++) {
-                                        if ((newModel.dataPoints[j].lvl === elementsOfTheNextLevel) && (newModel.dataPoints[j].reportTo === mainCommunicationElementName) && (newModel.dataPoints[j].isVisible)) {
-                                            Visual.connection = Visual.barGroup.append("line")
+                                        if ((newModel.dataPoints[j].lvl === elementsOfTheNextLevel) &&
+                                            (newModel.dataPoints[j].reportTo === mainCommunicationElementName) &&
+                                            (newModel.dataPoints[j].isVisible)) {
+                                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.connection = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup.append("line")
                                                 .classed('connection', true);
-                                            Visual.connection
-                                                .style("stroke", Visual.linksColor)
+                                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.connection
+                                                .style("stroke", chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.linksColor)
                                                 .attr("x1", xConnectionCoordinate)
                                                 .attr("y1", yConnectionCoordinate + 6)
                                                 .attr("x2", newModel.dataPoints[j].xCoordinate)
@@ -4813,36 +4863,50 @@ var powerbi;
                         }
                     };
                     DrawElements.deletingOldShapes = function () {
-                        Visual.barGroup
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
                             .selectAll(".rectangle")
                             .remove();
-                        Visual.barGroup
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
                             .selectAll(".nameTextValue")
                             .remove();
-                        Visual.barGroup
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
                             .selectAll(".subtitleTextValue")
                             .remove();
-                        Visual.barGroup
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
                             .selectAll(".connection")
                             .remove();
-                        Visual.barGroup
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
                             .selectAll(".circle")
                             .remove();
-                        Visual.barGroup
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
                             .selectAll(".imageScroll")
                             .remove();
-                        Visual.barGroup
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
                             .selectAll(".warningSign")
                             .remove();
                     };
                     return DrawElements;
                 }());
+                chart6F792A8745784877BCD8F4ACA5AD4207.DrawElements = DrawElements;
+            })(chart6F792A8745784877BCD8F4ACA5AD4207 = visual.chart6F792A8745784877BCD8F4ACA5AD4207 || (visual.chart6F792A8745784877BCD8F4ACA5AD4207 = {}));
+        })(visual = extensibility.visual || (extensibility.visual = {}));
+    })(extensibility = powerbi.extensibility || (powerbi.extensibility = {}));
+})(powerbi || (powerbi = {}));
+var powerbi;
+(function (powerbi) {
+    var extensibility;
+    (function (extensibility) {
+        var visual;
+        (function (visual) {
+            var chart6F792A8745784877BCD8F4ACA5AD4207;
+            (function (chart6F792A8745784877BCD8F4ACA5AD4207) {
                 var CalculationsForDrawing = (function () {
                     function CalculationsForDrawing() {
                     }
-                    CalculationsForDrawing.prototype.calculationOfWeightingCoefficients = function (newModel) {
+                    //calculation Of Weighting Coefficients
+                    CalculationsForDrawing.prototype.calcOfWeightCof = function (newModel) {
                         var currentWeight = 1;
-                        var currentLevel = Visual.numberOfLevelsThatIsVisible - 1;
+                        var currentLevel = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbVisibleLevls - 1;
                         for (var i = 0; i < newModel.dataPoints.length; i++) {
                             if ((newModel.dataPoints[i].lvl === currentLevel) && (newModel.dataPoints[i].isVisible)) {
                                 newModel.dataPoints[i].elementWeight = currentWeight;
@@ -4852,10 +4916,10 @@ var powerbi;
                         while (currentLevel >= 0) {
                             for (var i = 0; i < newModel.dataPoints.length; i++) {
                                 if ((newModel.dataPoints[i].lvl === currentLevel) && (newModel.dataPoints[i].isVisible)) {
-                                    currentWeight = this.countingTheWeightCurrentElement(newModel, currentLevel, i);
+                                    currentWeight = this.weightCurrentElement(newModel, currentLevel, i);
                                     newModel.dataPoints[i].elementWeight = currentWeight;
                                     if (currentLevel == 0) {
-                                        Visual.maximumElementWeight = currentWeight;
+                                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.maxElemWeight = currentWeight;
                                     }
                                 }
                             }
@@ -4863,10 +4927,12 @@ var powerbi;
                         }
                         return newModel;
                     };
-                    CalculationsForDrawing.prototype.countingTheWeightCurrentElement = function (newModel, currentLevel, i) {
+                    //counting The Weight Current Element
+                    CalculationsForDrawing.prototype.weightCurrentElement = function (newModel, currentLevel, i) {
                         var currentWeight = 0;
                         for (var j = 0; j < newModel.dataPoints.length; j++) {
-                            if ((newModel.dataPoints[j].lvl === currentLevel + 1) && (newModel.dataPoints[j].isVisible) && (newModel.dataPoints[i].id === newModel.dataPoints[j].reportTo)) {
+                            if ((newModel.dataPoints[j].lvl === currentLevel + 1) && (newModel.dataPoints[j].isVisible) &&
+                                (newModel.dataPoints[i].id === newModel.dataPoints[j].reportTo)) {
                                 currentWeight = currentWeight + newModel.dataPoints[j].elementWeight;
                             }
                         }
@@ -4875,7 +4941,8 @@ var powerbi;
                         }
                         return currentWeight;
                     };
-                    CalculationsForDrawing.prototype.definitionOfTheSmallestValue = function (firstValue, secondValue) {
+                    //search for the smallest value
+                    CalculationsForDrawing.prototype.searchSmallestValue = function (firstValue, secondValue) {
                         if (firstValue < secondValue) {
                             return firstValue;
                         }
@@ -4883,7 +4950,8 @@ var powerbi;
                             return secondValue;
                         }
                     };
-                    CalculationsForDrawing.prototype.definitionOfTheLargerValue = function (firstValue, secondValue) {
+                    //search for the highest value
+                    CalculationsForDrawing.prototype.searchLargerValue = function (firstValue, secondValue) {
                         if (firstValue > secondValue) {
                             return true;
                         }
@@ -4891,28 +4959,18 @@ var powerbi;
                             return false;
                         }
                     };
-                    CalculationsForDrawing.prototype.calculatingTheWidthOfShape = function (widthOfTheWindow, Weight) {
+                    //calculating The Width Of Shape
+                    CalculationsForDrawing.prototype.calcWidthShape = function (widthOfTheWindow, Weight) {
                         var widthOfTheShape = widthOfTheWindow / (Weight * 1.2);
                         return widthOfTheShape;
                     };
-                    CalculationsForDrawing.prototype.calculatingTheHeightOfShape = function (heightOfTheWindow) {
-                        var maxNumberOfTheLevel = Visual.numberOfElementsAtTheLevelThatIsVisible.length;
+                    //calculating The Height Of Shape
+                    CalculationsForDrawing.prototype.calcHeightShape = function (heightOfTheWindow) {
+                        var maxNumberOfTheLevel = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbVisibleElemOnLevel.length;
                         var heightOfTheShape = heightOfTheWindow / (maxNumberOfTheLevel * 1.3);
                         return heightOfTheShape;
                     };
-                    CalculationsForDrawing.prototype.searchMaximumNumberOfElementsAtTheLevel = function () {
-                        var max = 0;
-                        for (var i = 0; i < Visual.numberOfElementsAtTheLevelThatIsVisible.length; i++) {
-                            if (Visual.numberOfElementsAtTheLevelThatIsVisible[i] > max) {
-                                max = Visual.numberOfElementsAtTheLevelThatIsVisible[i];
-                            }
-                        }
-                        return max;
-                    };
-                    CalculationsForDrawing.prototype.calculationOfTheCoordinateX = function (xCenterCoordinate, gapWidth) {
-                        xCenterCoordinate = xCenterCoordinate + (gapWidth * 2);
-                        return xCenterCoordinate;
-                    };
+                    //Determine the color of the element by grounds of belonging to a team
                     CalculationsForDrawing.prototype.colorDefinitionByCommand = function (newModel, index, listTeams) {
                         var color;
                         for (var i = 0; i < listTeams.teamModel.length; i++) {
@@ -4922,6 +4980,7 @@ var powerbi;
                         }
                         return color;
                     };
+                    //change the visibility of an element of some level
                     CalculationsForDrawing.prototype.makingVisibleLevels = function (newModel, startLevel, endLevel) {
                         var currentLevel = startLevel;
                         for (var i = 0; i < newModel.dataPoints.length; i++) {
@@ -4937,32 +4996,34 @@ var powerbi;
                         }
                         return newModel;
                     };
-                    CalculationsForDrawing.prototype.numberOfElementsOnEachLevelThatIsVisible = function (newModel) {
-                        Visual.numberOfElementsAtTheLevelThatIsVisible = new Array();
-                        for (var i = 0; i < Visual.numberOfLevelsThatIsVisible + 1; i++) {
-                            Visual.numberOfElementsAtTheLevelThatIsVisible.push(0);
+                    //counting only visible elements (number Of Elements On Each Level That Is Visible)
+                    CalculationsForDrawing.prototype.countVisibleElemOnEachLevel = function (newModel) {
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbVisibleElemOnLevel = new Array();
+                        for (var i = 0; i < chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbVisibleLevls + 1; i++) {
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbVisibleElemOnLevel.push(0);
                         }
                         for (var j = 0; j < newModel.dataPoints.length; j++) {
                             if (newModel.dataPoints[j].isVisible) {
                                 var levelOfTheCurrentItem = 0;
                                 var temp = 0;
                                 levelOfTheCurrentItem = newModel.dataPoints[j].lvl;
-                                temp = Visual.numberOfElementsAtTheLevelThatIsVisible[levelOfTheCurrentItem];
-                                Visual.numberOfElementsAtTheLevelThatIsVisible[levelOfTheCurrentItem] = temp + 1;
+                                temp = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbVisibleElemOnLevel[levelOfTheCurrentItem];
+                                chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbVisibleElemOnLevel[levelOfTheCurrentItem] = temp + 1;
                             }
                         }
                     };
-                    CalculationsForDrawing.prototype.findLevelsThatIsVisible = function (newModel) {
+                    //search for visible levels (find Levels That Is Visible)
+                    CalculationsForDrawing.prototype.findVisibleLevels = function (newModel) {
                         var currentLevel = 0;
                         var previousLevel = -1;
-                        Visual.isExternalEventClick = false;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isExternalEventClick = false;
                         while (previousLevel != currentLevel) {
-                            if (currentLevel > Visual.numberOfLevels - 1) {
+                            if (currentLevel > chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbOfLevels - 1) {
                                 break;
                             }
                             for (var i = 0, len = newModel.dataPoints.length; i < len; i++) {
                                 if (newModel.dataPoints[i].highlighted) {
-                                    Visual.isExternalEventClick = true;
+                                    chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isExternalEventClick = true;
                                 }
                                 previousLevel = currentLevel;
                                 if ((newModel.dataPoints[i].lvl === currentLevel) && (newModel.dataPoints[i].isVisible)) {
@@ -4970,8 +5031,9 @@ var powerbi;
                                 }
                             }
                         }
-                        Visual.numberOfLevelsThatIsVisible = currentLevel;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbVisibleLevls = currentLevel;
                     };
+                    //determine which node has heirs
                     CalculationsForDrawing.prototype.searchOfHeirs = function (newModel) {
                         for (var i = 0; i < newModel.dataPoints.length; i++) {
                             for (var j = 0; j < newModel.dataPoints.length; j++) {
@@ -4983,6 +5045,7 @@ var powerbi;
                         }
                         return newModel;
                     };
+                    //when you hide an element, you need to hide its heirs
                     CalculationsForDrawing.prototype.makingVisibleAndInVisibleHeir = function (newModel, nameOfTheParent, isVisible) {
                         var listNames = new Array();
                         listNames.push(nameOfTheParent);
@@ -4994,7 +5057,7 @@ var powerbi;
                                     if (!isVisible) {
                                         listNames.push(newModel.dataPoints[i].id);
                                     }
-                                    if (newModel.dataPoints[i].lvl < Visual.numberOfLevels + 1) {
+                                    if (newModel.dataPoints[i].lvl < chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbOfLevels + 1) {
                                         newModel.dataPoints[i].isVisible = isVisible;
                                     }
                                 }
@@ -5002,6 +5065,7 @@ var powerbi;
                         } while (listNames.length != 0);
                         return newModel;
                     };
+                    //determine the parent by coordinates
                     CalculationsForDrawing.prototype.nameDeterminationByCoordinates = function (newModel, xCenterCoordinate, yCenterCoordinate) {
                         var nameOfTheParent = "";
                         for (var i = 0; i < newModel.dataPoints.length; i++) {
@@ -5011,19 +5075,21 @@ var powerbi;
                         }
                         return nameOfTheParent;
                     };
-                    CalculationsForDrawing.prototype.numberOfElementsOnEachLevel = function (newModel) {
-                        Visual.numberOfElementsAtTheLevel = new Array();
-                        for (var i = 0; i < Visual.numberOfLevels; i++) {
-                            Visual.numberOfElementsAtTheLevel.push(0);
+                    //number Of Elements On Each Level
+                    CalculationsForDrawing.prototype.numbElemOnEachLevl = function (newModel) {
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbElemOnLevel = new Array();
+                        for (var i = 0; i < chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbOfLevels; i++) {
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbElemOnLevel.push(0);
                         }
                         for (var j = 0; j < newModel.dataPoints.length; j++) {
                             var levelOfTheCurrentItem = 0;
                             var temp = 0;
                             levelOfTheCurrentItem = newModel.dataPoints[j].lvl;
-                            temp = Visual.numberOfElementsAtTheLevel[levelOfTheCurrentItem];
-                            Visual.numberOfElementsAtTheLevel[levelOfTheCurrentItem] = temp + 1;
+                            temp = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbElemOnLevel[levelOfTheCurrentItem];
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbElemOnLevel[levelOfTheCurrentItem] = temp + 1;
                         }
                     };
+                    //The search for the number of levels, and the definition of each node its level
                     CalculationsForDrawing.prototype.findLevels = function (cashModel) {
                         var lvlTop;
                         var lvlUp = {
@@ -5084,20 +5150,34 @@ var powerbi;
                                     newViewModel.dataPoints.push(lvlUp);
                                 }
                             } while (newViewModel.dataPoints.length != 1);
-                            Visual.criticalError = false;
-                            Visual.numberOfLevels = _lvl - 1;
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.criticalError = false;
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbOfLevels = _lvl - 1;
                         }
                         else {
-                            Visual.criticalError = true;
-                            Visual.numberOfLevels = _lvl - 1;
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.criticalError = true;
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.numbOfLevels = _lvl - 1;
                         }
                         return sortModel;
                     };
                     return CalculationsForDrawing;
                 }());
+                chart6F792A8745784877BCD8F4ACA5AD4207.CalculationsForDrawing = CalculationsForDrawing;
+            })(chart6F792A8745784877BCD8F4ACA5AD4207 = visual.chart6F792A8745784877BCD8F4ACA5AD4207 || (visual.chart6F792A8745784877BCD8F4ACA5AD4207 = {}));
+        })(visual = extensibility.visual || (extensibility.visual = {}));
+    })(extensibility = powerbi.extensibility || (powerbi.extensibility = {}));
+})(powerbi || (powerbi = {}));
+var powerbi;
+(function (powerbi) {
+    var extensibility;
+    (function (extensibility) {
+        var visual;
+        (function (visual) {
+            var chart6F792A8745784877BCD8F4ACA5AD4207;
+            (function (chart6F792A8745784877BCD8F4ACA5AD4207) {
                 var WorkWithTeams = (function () {
                     function WorkWithTeams() {
                     }
+                    //Connection of element type with its color (color is determined by the user)
                     WorkWithTeams.prototype.joiningCommandsWithColors = function (modelWithVisibleElements, viewModel) {
                         var listTeams = this.countingTheNumberOfTeams(modelWithVisibleElements, viewModel);
                         for (var i = 0; i < listTeams.teamModel.length; i++) {
@@ -5105,6 +5185,7 @@ var powerbi;
                         }
                         return listTeams;
                     };
+                    //Identify the type id to which the user belongs
                     WorkWithTeams.prototype.joiningPersonsWithTeamId = function (team, teamList) {
                         var teamId = -1;
                         for (var i = 0; i < teamList.teamModel.length; i++) {
@@ -5115,6 +5196,7 @@ var powerbi;
                         }
                         return teamId;
                     };
+                    //counting the number of teams
                     WorkWithTeams.prototype.countingTheNumberOfTeams = function (newModel, previousModel) {
                         var teamModelList = {
                             teamModel: []
@@ -5149,11 +5231,25 @@ var powerbi;
                     };
                     return WorkWithTeams;
                 }());
+                chart6F792A8745784877BCD8F4ACA5AD4207.WorkWithTeams = WorkWithTeams;
+            })(chart6F792A8745784877BCD8F4ACA5AD4207 = visual.chart6F792A8745784877BCD8F4ACA5AD4207 || (visual.chart6F792A8745784877BCD8F4ACA5AD4207 = {}));
+        })(visual = extensibility.visual || (extensibility.visual = {}));
+    })(extensibility = powerbi.extensibility || (powerbi.extensibility = {}));
+})(powerbi || (powerbi = {}));
+var powerbi;
+(function (powerbi) {
+    var extensibility;
+    (function (extensibility) {
+        var visual;
+        (function (visual) {
+            var chart6F792A8745784877BCD8F4ACA5AD4207;
+            (function (chart6F792A8745784877BCD8F4ACA5AD4207) {
                 var WorkWithWarning = (function () {
                     function WorkWithWarning() {
                     }
+                    //main method
                     WorkWithWarning.prototype.handlingOfWarnings = function (viewModel, modelWithLevels) {
-                        Visual.isWarning = true;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.isWarning = true;
                         var modelProblemElements = {
                             dataPoints: [],
                             teamSet: {},
@@ -5162,187 +5258,405 @@ var powerbi;
                         modelProblemElements = this.searchForErroneousElements(viewModel, modelWithLevels, modelProblemElements);
                         this.definitionOfWarnings(modelProblemElements, viewModel);
                     };
+                    //A method that returns all not drawn elements in which a bug is found
                     WorkWithWarning.prototype.searchForErroneousElements = function (viewModel, modelWithLevels, modelProblemElements) {
                         modelProblemElements.dataPoints = viewModel.dataPoints.filter(function (obj) { return modelWithLevels.dataPoints.indexOf(obj) == -1; });
                         return modelProblemElements;
                     };
+                    //search for matching id
                     WorkWithWarning.prototype.searchForSimilarId = function (viewModel) {
-                        Visual.sameId = false;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.sameId = false;
                         for (var i = 0; i < viewModel.dataPoints.length; i++) {
                             for (var j = 0; j < viewModel.dataPoints.length; j++) {
-                                //console.log(viewModel.dataPoints[i].id, viewModel.dataPoints[j].id);
-                                if ((viewModel.dataPoints[i].id == viewModel.dataPoints[j].id) && (viewModel.dataPoints[i].id != "") && (viewModel.dataPoints[i].id != " ") && (viewModel.dataPoints[i].id != null) && (i != j)) {
-                                    Visual.sameId = true;
+                                if ((viewModel.dataPoints[i].id == viewModel.dataPoints[j].id) &&
+                                    (viewModel.dataPoints[i].id != "") && (viewModel.dataPoints[i].id != " ") &&
+                                    (viewModel.dataPoints[i].id != null) && (i != j)) {
+                                    chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.sameId = true;
                                 }
                             }
                         }
                     };
+                    //error detection
                     WorkWithWarning.prototype.definitionOfWarnings = function (modelProblemElements, viewModel) {
-                        Visual.errorList = new Array();
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList = new Array();
                         var orphan = true;
-                        //let sameId = false;
-                        Visual.errorList[0] = "";
-                        Visual.errorList[2] = "";
-                        Visual.errorList[4] = "";
-                        Visual.errorList[6] = "";
-                        Visual.errorList[8] = "";
-                        Visual.errorList[10] = "";
+                        for (var i = 0; i < 14; i++) {
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[i] = "";
+                        }
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[9] = "are looped on each other";
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[11] = "have non-existing id";
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[13] = "are not associated with the main tree ";
+                        if (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.sameId) {
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[2] = "have the same Id";
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.criticalError = true;
+                        }
                         for (var i = 0; i < modelProblemElements.dataPoints.length; i++) {
                             if (viewModel.dataPoints.length == modelProblemElements.dataPoints.length) {
-                                Visual.errorList[0] = "The data does not contain a root element";
+                                chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[0] = "- The data do not contain a root element";
                             }
                             else {
-                                if ((modelProblemElements.dataPoints[i].reportTo == "") || (modelProblemElements.dataPoints[i].reportTo == " ") || (modelProblemElements.dataPoints[i].reportTo == null)) {
-                                    Visual.errorList[2] = "- Data contain two or more root nodes";
-                                }
-                                else {
-                                    if (modelProblemElements.dataPoints[i].id == "notFound") {
-                                        Visual.errorList[4] = "do not have id";
+                                if (!chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.criticalError) {
+                                    if ((modelProblemElements.dataPoints[i].reportTo == "") || (modelProblemElements.dataPoints[i].reportTo == " ") ||
+                                        (modelProblemElements.dataPoints[i].reportTo == null)) {
+                                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[4] = "- Data contain two or more root nodes";
                                     }
                                     else {
-                                        if (modelProblemElements.dataPoints[i].id == modelProblemElements.dataPoints[i].reportTo) {
-                                            Visual.errorList[6] = Visual.errorList[7] + " " + modelProblemElements.dataPoints[i].id;
+                                        if (modelProblemElements.dataPoints[i].id == "notFound") {
+                                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[6] = "do not have id";
                                         }
                                         else {
-                                            for (var j = 0; j < viewModel.dataPoints.length; j++) {
-                                                if (modelProblemElements.dataPoints[i].reportTo == viewModel.dataPoints[j].id) {
-                                                    orphan = false;
-                                                }
-                                            }
-                                            if (orphan) {
-                                                Visual.errorList[8] = Visual.errorList[8] + " " + modelProblemElements.dataPoints[i].id;
+                                            if (modelProblemElements.dataPoints[i].id == modelProblemElements.dataPoints[i].reportTo) {
+                                                chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[8] = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[8] + " " + modelProblemElements.dataPoints[i].id;
                                             }
                                             else {
-                                                Visual.errorList[10] = Visual.errorList[10] + " " + modelProblemElements.dataPoints[i].id;
+                                                for (var j = 0; j < viewModel.dataPoints.length; j++) {
+                                                    if (modelProblemElements.dataPoints[i].reportTo == viewModel.dataPoints[j].id) {
+                                                        orphan = false;
+                                                    }
+                                                }
+                                                if (orphan) {
+                                                    chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[10] = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[10] + " " + modelProblemElements.dataPoints[i].id;
+                                                }
+                                                else {
+                                                    chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[12] = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[12] + " " + modelProblemElements.dataPoints[i].id;
+                                                }
                                             }
+                                            orphan = true;
                                         }
-                                        orphan = true;
                                     }
                                 }
                             }
                         }
-                        Visual.errorList[1] = "";
-                        Visual.errorList[3] = "";
-                        Visual.errorList[5] = "";
-                        Visual.errorList[7] = "are looped on each other";
-                        Visual.errorList[9] = "have non-existing id";
-                        Visual.errorList[11] = "are not associated with the main tree ";
-                        /*
-                        for (let i = 0; i < viewModel.dataPoints.length; i++) {
-                            for (let j = 0; j < viewModel.dataPoints.length; j++) {
-                                //console.log(viewModel.dataPoints[i].id, viewModel.dataPoints[j].id);
-                                if((viewModel.dataPoints[i].id == viewModel.dataPoints[j].id)&&(viewModel.dataPoints[i].id != "")&&(viewModel.dataPoints[i].id != " ")&&(viewModel.dataPoints[i].id != null)&&(i!=j)){
-                                    sameId = true;
-                                    //console.log("IsError");
+                        this.addingAttributes();
+                    };
+                    WorkWithWarning.prototype.addingAttributes = function () {
+                        for (var i = 0; i < chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList.length; i = i + 2) {
+                            if (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[i].length != 0) {
+                                if ((i != 0) && (i != 4)) {
+                                    chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[i] = "- Items " + chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[i];
                                 }
                             }
-                        }
-                        */
-                        if (Visual.sameId) {
-                            Visual.errorList[12] = "have same Id";
-                            Visual.criticalError = true;
                         }
                     };
                     return WorkWithWarning;
                 }());
+                chart6F792A8745784877BCD8F4ACA5AD4207.WorkWithWarning = WorkWithWarning;
+            })(chart6F792A8745784877BCD8F4ACA5AD4207 = visual.chart6F792A8745784877BCD8F4ACA5AD4207 || (visual.chart6F792A8745784877BCD8F4ACA5AD4207 = {}));
+        })(visual = extensibility.visual || (extensibility.visual = {}));
+    })(extensibility = powerbi.extensibility || (powerbi.extensibility = {}));
+})(powerbi || (powerbi = {}));
+var powerbi;
+(function (powerbi) {
+    var extensibility;
+    (function (extensibility) {
+        var visual;
+        (function (visual) {
+            var chart6F792A8745784877BCD8F4ACA5AD4207;
+            (function (chart6F792A8745784877BCD8F4ACA5AD4207) {
                 var DrawWarning = (function () {
                     function DrawWarning() {
                     }
-                    DrawWarning.prototype.drawingWarningSign = function (options) {
+                    DrawWarning.prototype.drawingWarningSign = function () {
                         var _this = this;
-                        Visual.warningSign = Visual.barGroup.append("text")
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.warningSign = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup.append("path")
                             .classed("warningSign", true);
-                        Visual.warningSign
-                            .text("!")
-                            .attr({
-                            x: 10,
-                            y: 10,
-                            dy: "0.35em",
-                            "text-anchor": "middle"
-                        }).style("font-size", 40 + "px")
-                            .style("text-align", "left")
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.warningSign
+                            .style("stroke", "#FF8C00")
+                            .style("fill", "#FFD700")
+                            .style("font-weight", "bold")
+                            .attr("d", "M 10 35 L 30 2 L 50 35 L 10 35")
                             .on('mouseenter', function () {
-                            _this.drawingWarningWindow(options);
+                            _this.drawingWarningWindow();
                         })
                             .on('mouseleave', function () {
-                            Visual.barGroup
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
                                 .selectAll(".warningWindow")
                                 .remove();
-                            Visual.barGroup
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
+                                .selectAll(".warningText")
+                                .remove();
+                        });
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.warningSign = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup.append("text")
+                            .classed("warningSign", true);
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.warningSign
+                            .text("!")
+                            .attr({
+                            x: 30,
+                            y: 22,
+                            dy: "0.35em",
+                            "text-anchor": "middle"
+                        }).style("font-size", 30 + "px")
+                            .style("text-align", "left")
+                            .style("font-weight", "500")
+                            .style("font", "sans-serif")
+                            .on('mouseenter', function () {
+                            _this.drawingWarningWindow();
+                        })
+                            .on('mouseleave', function () {
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
+                                .selectAll(".warningWindow")
+                                .remove();
+                            chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup
                                 .selectAll(".warningText")
                                 .remove();
                         });
                     };
-                    DrawWarning.prototype.drawingWarningWindow = function (options) {
-                        var yCoordinate = 25;
-                        var widthWindow = 248;
-                        var text;
-                        Visual.warningWindow = Visual.barGroup.append("rect")
+                    /*
+                    public drawingWarningSign() {
+                        let path = "";
+                        Visual.warningSign = Visual.barGroup.append('image')
+                        .attr({
+                            'xlink:href': 'http://www.freeiconspng.com/uploads/warning-icon-24.png',
+                            x: 10,
+                            y: 0,
+                            width: 40,
+                            height: 40
+                          }).classed("warningSign", true);
+                    }
+                    */
+                    /*
+                    public drawingWarningWindow() {
+                        let yCoordinate = 25;
+                        let lengthOfString = 0;
+                        let text;
+            
+                        DataStorage.warningWindow = DataStorage.barGroup.append("rect")
                             .classed('warningWindow', true);
-                        if (Visual.visualWindowWidth < 280) {
-                            widthWindow = Visual.visualWindowWidth - 25;
-                        }
-                        for (var i = 0; i < Visual.errorList.length; i = i + 2) {
-                            if (Visual.errorList[i].length != 0) {
-                                if (i > 3) {
+            
+                        for (let i = 0; i < DataStorage.errorList.length; i = i + 2) {
+                            if (DataStorage.errorList[i].length > lengthOfString) {
+                                lengthOfString = DataStorage.errorList[i].length;
+                            }
+                            if (DataStorage.errorList[i].length != 0) {
+                                if ((i != 0)&&(i != 4)) {
                                     text = "- Items ";
-                                }
-                                else {
-                                    text = "";
-                                }
-                                var k = 0;
-                                var error = Visual.errorList[i].split(' ');
-                                for (var j = 0; j < error.length; j++) {
+                                } else { text = ""; }
+                                let k = 0;
+                                let error = DataStorage.errorList[i].split(' ');
+                                for (let j = 0; j < error.length; j++) {
                                     text = text + " " + error[j];
                                     k++;
                                     if (k > 9) {
-                                        this.drawingWarningText(options, text, yCoordinate, i);
+                                        this.drawingWarningText(text, yCoordinate, i);
                                         yCoordinate = yCoordinate + 15;
                                         k = 0;
                                         text = " ";
                                     }
                                 }
                                 if (k != 0) {
-                                    this.drawingWarningText(options, text, yCoordinate, i);
+                                    this.drawingWarningText(text, yCoordinate, i);
                                 }
                                 yCoordinate = yCoordinate + 15;
-                                text = Visual.errorList[i + 1];
+                                text = DataStorage.errorList[i + 1];
                                 if (text != "") {
-                                    this.drawingWarningText(options, text, yCoordinate, i);
+                                    this.drawingWarningText(text, yCoordinate, i);
                                     yCoordinate = yCoordinate + 15;
                                 }
                             }
                         }
-                        Visual.warningWindow
+                        let widthWindow = lengthOfString * 7;
+                        if (DataStorage.visualWindowWidth < 280) {
+                            widthWindow = DataStorage.visualWindowWidth - 25;
+                        }
+                        DataStorage.warningWindow
+                            .style("fill", " #FFFACD")
+                            .style("stroke", "black")
+                            .style("stroke-width", 2)
+                            .attr({
+                                rx: 6,
+                                x: 50,
+                                y: 10,
+                                width: widthWindow,
+                                height: yCoordinate - 10
+                            })
+                    }
+                    */
+                    DrawWarning.prototype.searchLongestStr = function (list) {
+                        var lengthOfString = 0;
+                        var longestWord = 0;
+                        for (var i = 0; i < list.length; i++) {
+                            if (list[i].length > lengthOfString) {
+                                lengthOfString = list[i].length;
+                            }
+                            var error = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[i].split(' ');
+                            for (var j = 0; j < error.length; j++) {
+                                if (error[j].length > longestWord) {
+                                    longestWord = error[j].length;
+                                }
+                            }
+                        }
+                        return [lengthOfString, longestWord];
+                    };
+                    DrawWarning.prototype.splitExceptionIntoStrings = function (itemWarning, yCoordinate, scrollSize) {
+                        var text = "";
+                        var numberLines = 0;
+                        var error = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[itemWarning].split(' ');
+                        for (var j = 0; j < error.length; j++) {
+                            if ((text + error[j]).length * 6.5 < chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth - scrollSize - 5) {
+                                text = text + " " + error[j];
+                            }
+                            else {
+                                this.drawingWarningText(text, yCoordinate, itemWarning);
+                                yCoordinate = yCoordinate + 15;
+                                numberLines++;
+                                text = "";
+                                j--;
+                            }
+                            if ((j + 1) == error.length) {
+                                this.drawingWarningText(text, yCoordinate, itemWarning);
+                                yCoordinate = yCoordinate + 15;
+                                numberLines++;
+                                text = "";
+                            }
+                        }
+                        return numberLines;
+                    };
+                    DrawWarning.prototype.drawingWarningWindow = function () {
+                        var yCoordinate = 25;
+                        var arrOfLengthVal = this.searchLongestStr(chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList);
+                        var lengthOfString = arrOfLengthVal[0];
+                        var longestWord = arrOfLengthVal[1];
+                        var noAreaForInfo = false;
+                        var scrollSize = 50;
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.warningWindow = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup.append("rect")
+                            .classed('warningWindow', true);
+                        if (longestWord * 6.5 < chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth - 60) {
+                            for (var i = 0; i < chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList.length; i = i + 2) {
+                                if (i < 4) {
+                                    //then the distance under the scroll is absent
+                                    if (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[i].length != 0) {
+                                        scrollSize = 20;
+                                    }
+                                }
+                                if (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[i].length != 0) {
+                                    for (var j = i; j < i + 2; j++) {
+                                        if (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[j].length * 6.5 > chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth - scrollSize) {
+                                            //the text climbs out the window
+                                            var numberLines = this.splitExceptionIntoStrings(j, yCoordinate, scrollSize);
+                                            yCoordinate = yCoordinate + numberLines * 15;
+                                        }
+                                        else {
+                                            if (chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[j].length != 0) {
+                                                var text = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.errorList[j];
+                                                this.drawingWarningText(text, yCoordinate, j);
+                                                yCoordinate = yCoordinate + 15;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            noAreaForInfo = true;
+                        }
+                        var widthWindow;
+                        //6.5 (because one letter takes 6.5 pixels)
+                        if (lengthOfString * 6.5 > chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth - 50) {
+                            if (scrollSize == 20) {
+                                //then the distance under the scroll is absent
+                                widthWindow = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth - 32;
+                            }
+                            else {
+                                widthWindow = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.visualWindowWidth - 56;
+                            }
+                        }
+                        else {
+                            widthWindow = lengthOfString * 6.5;
+                        }
+                        if (noAreaForInfo) {
+                            widthWindow = 40;
+                        }
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.warningWindow
                             .style("fill", " #FFFACD")
                             .style("stroke", "black")
                             .style("stroke-width", 2)
                             .attr({
                             rx: 6,
-                            x: 50,
+                            x: 55,
                             y: 10,
                             width: widthWindow,
                             height: yCoordinate - 10
                         });
+                        if (noAreaForInfo) {
+                            this.inscriptionError();
+                        }
                     };
-                    DrawWarning.prototype.drawingWarningText = function (options, error, yCoordinate, errorId) {
+                    DrawWarning.prototype.inscriptionError = function () {
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.warningText = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup.append("text")
+                            .classed('warningText', true);
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.warningText
+                            .text("Error")
+                            .attr({
+                            x: 60,
+                            y: 22
+                        }).style("font-size", 12 + "px")
+                            .style("fill", "black")
+                            .style("text-align", "left");
+                    };
+                    DrawWarning.prototype.drawingWarningText = function (error, yCoordinate, errorId) {
                         var color = "black";
-                        if ((errorId == 0) || (errorId == 12)) {
+                        if ((errorId == 0) || (errorId == 2)) {
                             color = "red";
                         }
-                        Visual.warningText = Visual.barGroup.append("text")
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.warningText = chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.barGroup.append("text")
                             .classed('warningText', true);
-                        Visual.warningText
+                        chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage.warningText
                             .text(error)
                             .attr({
-                            x: 55,
+                            x: 60,
                             y: yCoordinate
                         }).style("font-size", 12 + "px")
                             .style("fill", color)
-                            .style("text-align", "left").text();
+                            .style("text-align", "left");
                     };
                     return DrawWarning;
                 }());
+                chart6F792A8745784877BCD8F4ACA5AD4207.DrawWarning = DrawWarning;
+            })(chart6F792A8745784877BCD8F4ACA5AD4207 = visual.chart6F792A8745784877BCD8F4ACA5AD4207 || (visual.chart6F792A8745784877BCD8F4ACA5AD4207 = {}));
+        })(visual = extensibility.visual || (extensibility.visual = {}));
+    })(extensibility = powerbi.extensibility || (powerbi.extensibility = {}));
+})(powerbi || (powerbi = {}));
+var powerbi;
+(function (powerbi) {
+    var extensibility;
+    (function (extensibility) {
+        var visual;
+        (function (visual) {
+            var chart6F792A8745784877BCD8F4ACA5AD4207;
+            (function (chart6F792A8745784877BCD8F4ACA5AD4207) {
+                ;
+                ;
+                ;
+                ;
+            })(chart6F792A8745784877BCD8F4ACA5AD4207 = visual.chart6F792A8745784877BCD8F4ACA5AD4207 || (visual.chart6F792A8745784877BCD8F4ACA5AD4207 = {}));
+        })(visual = extensibility.visual || (extensibility.visual = {}));
+    })(extensibility = powerbi.extensibility || (powerbi.extensibility = {}));
+})(powerbi || (powerbi = {}));
+var powerbi;
+(function (powerbi) {
+    var extensibility;
+    (function (extensibility) {
+        var visual;
+        (function (visual) {
+            var chart6F792A8745784877BCD8F4ACA5AD4207;
+            (function (chart6F792A8745784877BCD8F4ACA5AD4207) {
+                var DataStorage = (function () {
+                    function DataStorage() {
+                    }
+                    return DataStorage;
+                }());
+                //User(Custom) settings
+                DataStorage.defaultColor = "green";
+                DataStorage.isControls = true;
+                //other variables
+                DataStorage.isWarning = false;
+                DataStorage.isDependenciesVisible = false;
+                DataStorage.isExternalEventClick = false;
+                DataStorage.maxElemWeight = 0;
+                DataStorage.criticalError = false;
+                DataStorage.sameId = false;
+                DataStorage.makeSingleEvent = false;
+                chart6F792A8745784877BCD8F4ACA5AD4207.DataStorage = DataStorage;
             })(chart6F792A8745784877BCD8F4ACA5AD4207 = visual.chart6F792A8745784877BCD8F4ACA5AD4207 || (visual.chart6F792A8745784877BCD8F4ACA5AD4207 = {}));
         })(visual = extensibility.visual || (extensibility.visual = {}));
     })(extensibility = powerbi.extensibility || (powerbi.extensibility = {}));
