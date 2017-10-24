@@ -14,7 +14,7 @@
     "node_modules/powerbi-visuals-utils-colorutils/lib/index.d.ts",
     "node_modules/@types/d3/index.d.ts",
     "src/settings.ts",
-    "src/visual.ts",
+    "src/hierarchyChart.ts",
     "src/drawControlPanel.ts",
     "src/drawElements.ts",
     "src/calculationsForDrawing.ts",

@@ -5401,76 +5401,6 @@ var powerbi;
                                 .remove();
                         });
                     };
-                    /*
-                    public drawingWarningSign() {
-                        let path = "";
-                        Visual.warningSign = Visual.barGroup.append('image')
-                        .attr({
-                            'xlink:href': 'http://www.freeiconspng.com/uploads/warning-icon-24.png',
-                            x: 10,
-                            y: 0,
-                            width: 40,
-                            height: 40
-                          }).classed("warningSign", true);
-                    }
-                    */
-                    /*
-                    public drawingWarningWindow() {
-                        let yCoordinate = 25;
-                        let lengthOfString = 0;
-                        let text;
-            
-                        DataStorage.warningWindow = DataStorage.barGroup.append("rect")
-                            .classed('warningWindow', true);
-            
-                        for (let i = 0; i < DataStorage.errorList.length; i = i + 2) {
-                            if (DataStorage.errorList[i].length > lengthOfString) {
-                                lengthOfString = DataStorage.errorList[i].length;
-                            }
-                            if (DataStorage.errorList[i].length != 0) {
-                                if ((i != 0)&&(i != 4)) {
-                                    text = "- Items ";
-                                } else { text = ""; }
-                                let k = 0;
-                                let error = DataStorage.errorList[i].split(' ');
-                                for (let j = 0; j < error.length; j++) {
-                                    text = text + " " + error[j];
-                                    k++;
-                                    if (k > 9) {
-                                        this.drawingWarningText(text, yCoordinate, i);
-                                        yCoordinate = yCoordinate + 15;
-                                        k = 0;
-                                        text = " ";
-                                    }
-                                }
-                                if (k != 0) {
-                                    this.drawingWarningText(text, yCoordinate, i);
-                                }
-                                yCoordinate = yCoordinate + 15;
-                                text = DataStorage.errorList[i + 1];
-                                if (text != "") {
-                                    this.drawingWarningText(text, yCoordinate, i);
-                                    yCoordinate = yCoordinate + 15;
-                                }
-                            }
-                        }
-                        let widthWindow = lengthOfString * 7;
-                        if (DataStorage.visualWindowWidth < 280) {
-                            widthWindow = DataStorage.visualWindowWidth - 25;
-                        }
-                        DataStorage.warningWindow
-                            .style("fill", " #FFFACD")
-                            .style("stroke", "black")
-                            .style("stroke-width", 2)
-                            .attr({
-                                rx: 6,
-                                x: 50,
-                                y: 10,
-                                width: widthWindow,
-                                height: yCoordinate - 10
-                            })
-                    }
-                    */
                     DrawWarning.prototype.searchLongestStr = function (list) {
                         var lengthOfString = 0;
                         var longestWord = 0;
@@ -5669,7 +5599,7 @@ var powerbi;
         (function (plugins) {
             plugins.chart6F792A8745784877BCD8F4ACA5AD4207 = {
                 name: 'chart6F792A8745784877BCD8F4ACA5AD4207',
-                displayName: 'Chart',
+                displayName: 'HierarhyChart',
                 class: 'Visual',
                 version: '1.0.0',
                 apiVersion: '1.7.0',

@@ -1,7 +1,7 @@
 {
   "visual": {
     "name": "chart",
-    "displayName": "Chart",
+    "displayName": "HierarhyChart",
     "guid": "chart6F792A8745784877BCD8F4ACA5AD4207",
     "visualClassName": "Visual",
     "version": "1.0.0",
