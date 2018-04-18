@@ -18,6 +18,9 @@ module powerbi.extensibility.visual {
         public static img: d3.Selection<SVGElement>;
         public static backgroundWindow: d3.Selection<SVGElement>;
 
+        public static toolTip: d3.Selection<SVGElement>;
+        public static toolTipWindow: d3.Selection<SVGElement>;
+
         //User(Custom) settings
         public static defaultColor: string = "green";
         public static isControls: boolean = true;
@@ -40,6 +43,8 @@ module powerbi.extensibility.visual {
         public static showNodes: boolean;
         public static showLegend: boolean;
         public static showWarning: boolean;
+        public static showTooltip: boolean;
+
 
         //other variables
         public static isWarning: boolean = false;
@@ -59,5 +64,6 @@ module powerbi.extensibility.visual {
         public static criticalError: boolean = false;
         public static sameId: boolean = false;
         public static makeSingleEvent: boolean = false;
+        public static isTooltip: boolean = false;
     }
 }

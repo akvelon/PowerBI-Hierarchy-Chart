@@ -61,6 +61,8 @@ module powerbi.extensibility.visual {
             const levels = this.settings.levels;
             const legend = this.settings.legend;
             const warning = this.settings.warning;
+            const tooltip = this.settings.tooltip;
+            
 
             DataStorage.colorName = nodes.colorName;
             DataStorage.displayHeightAndWidth = nodes.displayHeightAndWidth;
@@ -81,6 +83,7 @@ module powerbi.extensibility.visual {
             DataStorage.isMaxDepth = levels.isMaxDepth;
             DataStorage.showNodes = nodes.show;
             DataStorage.showWarning = warning.show;
+            DataStorage.showTooltip = tooltip.show;
 
             let drawElements: DrawElements = new DrawElements();
             let calculationsForDrawing: CalculationsForDrawing = new CalculationsForDrawing();
@@ -233,6 +236,7 @@ module powerbi.extensibility.visual {
                 reportTo: -1,
                 team: -1,
                 position: -1,
+                tooltip: -1,
             };
 
             dataView.categorical.categories.forEach((column: DataViewCategoryColumn, columnIndex: number) => {
@@ -250,6 +254,10 @@ module powerbi.extensibility.visual {
             for (let dataPointIndex: number = 0; dataPointIndex < amountOfDataPoints; dataPointIndex++) {
 
                 const id: string = categories[columnIndexes.category].values[dataPointIndex] as string;
+                let nameOfHeader : string
+                if(categories[columnIndexes.category].identity[dataPointIndex].key) {
+                    nameOfHeader = categories[columnIndexes.category].identity[dataPointIndex].key as string;
+                }
                 const title: string = categories[columnIndexes.title].values[dataPointIndex] as string;
                 const reportTo: string = categories[columnIndexes.reportTo].values[dataPointIndex] as string;
                 const lvl: number = 0 as number;
@@ -258,6 +266,9 @@ module powerbi.extensibility.visual {
                 const isVisible: boolean = false as boolean;
                 let team: string = "" as string;
                 let position: string = "" as string;
+
+                let tooltip: string = "" as string;
+
                 const teamId: number = 0 as number;
                 const boolSelectionIds: boolean = false as boolean;
                 const isHeirs: boolean = false as boolean;
@@ -268,19 +279,27 @@ module powerbi.extensibility.visual {
                     .withCategory(categories[columnIndexes.category], dataPointIndex)
                     .createSelectionId();
                 const boolSelectionId: boolean = false as boolean;
-                if (categories[columnIndexes.position] == undefined) {
-                    position = "";
-                } else {
+                if (categories[columnIndexes.position]) {
                     position = categories[columnIndexes.position].values[dataPointIndex] as string;
-                }
-                if (categories[columnIndexes.team] == undefined) {
-                    team = "";
                 } else {
+                    position = "";
+                }
+                if (categories[columnIndexes.team]) {
                     team = categories[columnIndexes.team].values[dataPointIndex] as string;
+                } else {
+                    team = "";
                 }
                 if (((team == " ") || (team == null) || (team == "")) && (columnIndexes.team != -1)) {
                     team = "Fill";
                 }
+
+                // for tooltip
+                if (categories[columnIndexes.tooltip]) {
+                    tooltip = categories[columnIndexes.tooltip].values[dataPointIndex] as string;
+                } else {
+                    tooltip = "";
+                }
+
                 if (!viewModel.teamSet[team]) {
                     const color: string = this.getColor(
                         Visual.TeamsColorIdentifier,
@@ -316,7 +335,9 @@ module powerbi.extensibility.visual {
                     highlighted,
                     isHeirs,
                     elementWeight,
-                    parentStartX
+                    parentStartX,
+                    nameOfHeader, 
+                    tooltip
                 });
             }
             viewModel.highlights = viewModel.dataPoints.filter(d => d.highlighted).length > 0;

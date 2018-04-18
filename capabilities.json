@@ -30,6 +30,11 @@
             "displayName": "Values",
             "name": "values",
             "kind": "Measure"
+        },
+        {
+            "displayName": "Tooltip",
+            "name": "tooltip",
+            "kind": "Grouping"
         }
     ],
     "dataViewMappings": [
@@ -57,6 +62,10 @@
                         "max": 1
                     },
                     "values": {
+                        "min": 0,
+                        "max": 1
+                    },
+                    "tooltip": {
                         "min": 0,
                         "max": 1
                     }
@@ -93,6 +102,11 @@
                         {
                             "bind": {
                                 "to": "values"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "tooltip"
                             }
                         }
                     ],
@@ -313,6 +327,19 @@
         "warning": {
             "displayName": "Warning",
             "displayNameKey": "Visual_warning",
+            "properties": {
+                "show": {
+                    "displayName": "Show",
+                    "displayNameKey": "Visual_Show",
+                    "type": {
+                        "bool": true
+                    }
+                }
+            }
+        },
+        "tooltip": {
+            "displayName": "Tooltip",
+            "displayNameKey": "Visual_tooltip",
             "properties": {
                 "show": {
                     "displayName": "Show",

@@ -4,24 +4,26 @@ module powerbi.extensibility.visual {
   import DataViewObjectsParser = powerbi.extensibility.utils.dataview.DataViewObjectsParser;
 
   export class VisualSettings extends DataViewObjectsParser {
-    public levels: levelsSettings = new levelsSettings();
-    public links: linksSettings = new linksSettings();
-    public nodes: nodesSettings = new nodesSettings();
-    public legend: legendSettings = new legendSettings();
-    public warning: warningSettings = new warningSettings();
+    public levels: LevelsSettings = new LevelsSettings();
+    public links: LinksSettings = new LinksSettings();
+    public nodes: NodesSettings = new NodesSettings();
+    public legend: LegendSettings = new LegendSettings();
+    public warning: WarningSettings = new WarningSettings();
+
+    public tooltip: TooltipSettings = new TooltipSettings();
   }
 
-  export class levelsSettings {
+  export class LevelsSettings {
     public controls: boolean = true;
     public isMaxDepth: boolean = false;
     public maxDepth: number = 10;
   }
 
-  export class linksSettings {
+  export class LinksSettings {
     public color: string = "black";
   }
 
-  export class nodesSettings {
+  export class NodesSettings {
     public show: boolean = false;
     public displayHeightAndWidth: boolean = false;
     public height: number = 100;
@@ -33,7 +35,7 @@ module powerbi.extensibility.visual {
     public shape: boolean = false;
   }
 
-  export class legendSettings {
+  export class LegendSettings {
     public show: boolean = true;
     public position: string = "0";
     public showLegend: boolean = false;
@@ -42,7 +44,12 @@ module powerbi.extensibility.visual {
     public fontSize: number = 8;
   }
 
-  export class warningSettings {
+  export class WarningSettings {
+    public show: boolean = true;
+  }
+
+
+  export class TooltipSettings {
     public show: boolean = true;
   }
 }

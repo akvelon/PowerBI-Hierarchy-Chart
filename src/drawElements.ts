@@ -19,6 +19,7 @@ module powerbi.extensibility.visual {
             widthOfTheShape = calculationsForDrawing.searchSmallestValue(widthOfTheShape, DataStorage.visualWindowWidth / 5)
             let isHeightGreaterThanWidth = calculationsForDrawing.searchLargerValue(heightOfTheShape, widthOfTheShape);
 
+
             if (DataStorage.displayHeightAndWidth) {
                 heightOfTheShape = DataStorage.customShapeHeight;
                 widthOfTheShape = DataStorage.customShapeWidth;
@@ -88,11 +89,11 @@ module powerbi.extensibility.visual {
                         let offsetValue = DataStorage.distanceBetweenTitleAndSubtitle;
                         this.drawingTitle(xCenterCoordinate, yCenterCoordinate, newModel.dataPoints[i].title,
                             newModel, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels,
-                            newModel.dataPoints[i].lvl, isHeightGreaterThanWidth);
+                            newModel.dataPoints[i].lvl, isHeightGreaterThanWidth, heightOfTheShape, widthOfTheShape);
 
                         this.drawingSubtitle(xCenterCoordinate, yCenterCoordinate, newModel, i, fontSizeValue,
                             offsetValue, listTeams, numberOfVisibleLevels,
-                            newModel.dataPoints[i].lvl, isHeightGreaterThanWidth);
+                            newModel.dataPoints[i].lvl, isHeightGreaterThanWidth, heightOfTheShape, widthOfTheShape);
 
                         newModel.dataPoints[i].xCoordinate = xCenterCoordinate;
                         newModel.dataPoints[i].yCoordinate = yCenterCoordinate;
@@ -220,7 +221,31 @@ module powerbi.extensibility.visual {
                     } else{
                         this.selectSingleEvent(newModel,i, listTeams);
                     }
-                });
+                })
+
+
+
+                // event for tooltip 
+                .on("mouseover", () => {
+                    this.calculationCoordinatesForTooltipDrawing(newModel, i, listTeams,
+                        xCenterCoordinate, yCenterCoordinate, widthOfTheShape, heightOfTheShape);
+
+                })
+                .on("mouseout", function() {
+                    DataStorage.barGroup
+                        .selectAll(".toolTip")
+                        .remove()
+
+                    DataStorage.barGroup
+                        .selectAll(".toolTipWindow")
+                        .remove();
+                    
+                  });
+                
+
+
+
+
             if ((newModel.dataPoints[i].highlighted) || (newModel.dataPoints[i].boolSelectionId)) {
                 DataStorage.rectangle.style("opacity", 1);
             }
@@ -294,7 +319,24 @@ module powerbi.extensibility.visual {
                     } else{
                         this.selectSingleEvent(newModel,i, listTeams);
                     }
-                });
+                })
+
+                // event for tooltip 
+                .on("mouseover", () => {
+                    this.calculationCoordinatesForTooltipDrawing(newModel, i, listTeams,
+                        xCenterCoordinate, yCenterCoordinate, widthOfTheShape, heightOfTheShape);
+
+                })
+                .on("mouseout", function() {
+                    DataStorage.barGroup
+                        .selectAll(".toolTip")
+                        .remove()
+
+                    DataStorage.barGroup
+                        .selectAll(".toolTipWindow")
+                        .remove();
+                    
+                  });
 
             if ((newModel.dataPoints[i].highlighted) || (newModel.dataPoints[i].boolSelectionId)) {
                 DataStorage.rectangle.style("opacity", 1);
@@ -312,7 +354,9 @@ module powerbi.extensibility.visual {
             listTeams: TeamModelList,
             numberOfVisibleLevels,
             lvl,
-            isHeightGreaterThanWidth
+            isHeightGreaterThanWidth, 
+            heightOfTheShape,
+            widthOfTheShape
         ) {
             let writingMode;
             let xCoordinate;
@@ -335,7 +379,6 @@ module powerbi.extensibility.visual {
                 .attr({
                     x: xCoordinate,
                     y: yCoordinate,
-                    //dy: "0.35 em",
                     "text-anchor": "middle"
                 }).style("font-size", DataStorage.customFontSizeTitle + "px")
                 .style("fill", DataStorage.colorName)
@@ -346,7 +389,27 @@ module powerbi.extensibility.visual {
                     } else{
                         this.selectSingleEvent(newModel,i, listTeams);
                     }
-                });
+                })
+
+
+
+                // event for tooltip 
+                .on("mouseover", () => {
+                    this.calculationCoordinatesForTooltipDrawing(newModel, i, listTeams,
+                        xCenterCoordinate, yCenterCoordinate, widthOfTheShape, heightOfTheShape);
+
+                })
+                .on("mouseout", function() {
+                    DataStorage.barGroup
+                        .selectAll(".toolTip")
+                        .remove()
+
+                    DataStorage.barGroup
+                        .selectAll(".toolTipWindow")
+                        .remove();
+                    
+                  });
+                
         }
 
         public drawingSubtitle(
@@ -360,6 +423,8 @@ module powerbi.extensibility.visual {
             numberOfVisibleLevels,
             lvl,
             isHeightGreaterThanWidth,
+            heightOfTheShape,
+            widthOfTheShape
         ) {
             let writingMode;
             let xCoordinate;
@@ -382,7 +447,6 @@ module powerbi.extensibility.visual {
                 .attr({
                     x: xCoordinate,
                     y: yCoordinate,
-                    //dy: "0.35 em",
                     "text-anchor": "middle"
                 })
                 .style("fill", DataStorage.colorName)
@@ -394,10 +458,28 @@ module powerbi.extensibility.visual {
                     } else{
                         this.selectSingleEvent(newModel,i, listTeams);
                     }
-                });
+                })
+
+
+                // event for tooltip
+                .on("mouseover", () => {
+                    this.calculationCoordinatesForTooltipDrawing(newModel, i, listTeams,
+                        xCenterCoordinate, yCenterCoordinate, widthOfTheShape, heightOfTheShape);
+
+                })
+                .on("mouseout", function() {
+                    DataStorage.barGroup
+                        .selectAll(".toolTip")
+                        .remove()
+
+                    DataStorage.barGroup
+                        .selectAll(".toolTipWindow")
+                        .remove();
+                    
+                  });
         }
 
-        //highlighting selected nodes withOut Ctrl
+        // highlighting selected nodes withOut Ctrl
         public selectSingleEvent(newModel: ViewModel, i, listTeams){
             let drawControlPanel: DrawControlPanel = new DrawControlPanel();
             DataStorage.selectionManager.clear();
@@ -417,6 +499,268 @@ module powerbi.extensibility.visual {
             }
             DataStorage.makeSingleEvent = true;
         }
+
+
+
+        // for pointing
+        public calculationCoordinatesForTooltipDrawing(newModel: ViewModel, i, listTeams,
+        xCenterCoordinate, yCenterCoordinate, widthOfTheShape, heightOfTheShape) {
+            if(widthOfTheShape > 80) {
+                if(widthOfTheShape > 150) {
+                    widthOfTheShape = widthOfTheShape - 100;
+                }else {
+                    widthOfTheShape = widthOfTheShape - 55;
+                }
+            }else if(heightOfTheShape > 80) {
+                if(heightOfTheShape > 150) {
+                    heightOfTheShape = heightOfTheShape - 170;
+                }else {
+                    heightOfTheShape = heightOfTheShape - 55;
+                }
+            }
+    
+            if((DataStorage.visualWindowWidth - xCenterCoordinate) < 400 && (DataStorage.visualWindowHeight - yCenterCoordinate) < 100) {       
+                yCenterCoordinate = yCenterCoordinate - heightOfTheShape*4.5;
+                xCenterCoordinate = xCenterCoordinate - widthOfTheShape*3;
+            }else if((DataStorage.visualWindowWidth - xCenterCoordinate) < 400 && (DataStorage.visualWindowHeight - yCenterCoordinate) > 100) {
+                yCenterCoordinate = yCenterCoordinate - heightOfTheShape*2;
+                xCenterCoordinate = xCenterCoordinate - widthOfTheShape*3;
+            }else if(DataStorage.visualWindowHeight - yCenterCoordinate < 160) {
+                
+                if(DataStorage.visualWindowWidth - xCenterCoordinate >= 160) {
+                    yCenterCoordinate = yCenterCoordinate - heightOfTheShape*3;
+                    xCenterCoordinate = xCenterCoordinate + widthOfTheShape*1.6;
+                }else if(DataStorage.visualWindowWidth - xCenterCoordinate >= 300) {
+                    yCenterCoordinate = yCenterCoordinate - heightOfTheShape*2;
+                    xCenterCoordinate = xCenterCoordinate + widthOfTheShape*1.6;
+                }else if(DataStorage.visualWindowWidth - xCenterCoordinate >= 1000) {
+                    yCenterCoordinate = yCenterCoordinate - heightOfTheShape*2;
+                    xCenterCoordinate = xCenterCoordinate + widthOfTheShape*1.6;
+                }  
+            }else if(DataStorage.visualWindowHeight - yCenterCoordinate > 160) {
+                
+                if(DataStorage.visualWindowWidth - xCenterCoordinate >= 160) {
+                    xCenterCoordinate = xCenterCoordinate + widthOfTheShape*1.6;
+                }else if(DataStorage.visualWindowWidth - xCenterCoordinate >= 300) {
+                    xCenterCoordinate = xCenterCoordinate + widthOfTheShape*1.6;
+                }else if(DataStorage.visualWindowWidth - xCenterCoordinate >= 1000) {
+                    xCenterCoordinate = xCenterCoordinate + widthOfTheShape*1.6;
+                }
+            }
+
+            if(DataStorage.visualWindowHeight - yCenterCoordinate > 350) {
+                yCenterCoordinate = yCenterCoordinate + heightOfTheShape;
+            }
+
+            let parentID = newModel.dataPoints[i].reportTo;
+            let parentName = "";
+            for(let j = 0; j < newModel.dataPoints.length; j++) {
+                if(newModel.dataPoints[j].id == parentID) {
+                    parentName = newModel.dataPoints[j].title;
+                }
+            }
+            if(newModel.dataPoints[i].reportTo == "" || newModel.dataPoints[i].reportTo == null) {
+                parentName = null;
+            }
+    
+            if(heightOfTheShape < 30) {
+                heightOfTheShape = heightOfTheShape + 20;
+            }else if(heightOfTheShape > 80) {
+                heightOfTheShape = heightOfTheShape - 50;
+            }
+    
+            if(widthOfTheShape < 100) {
+                if(parentName.length >= 15) {
+                    widthOfTheShape = widthOfTheShape + parentName.length*3;
+                    xCenterCoordinate = xCenterCoordinate - 50;
+                }else if(newModel.dataPoints[i].title.length >= 15) {
+                    widthOfTheShape = widthOfTheShape + newModel.dataPoints[i].title.length*3;
+                    xCenterCoordinate = xCenterCoordinate - 50;
+                 }
+    
+                if(widthOfTheShape < 90) {
+                    widthOfTheShape = widthOfTheShape + 20;
+                }
+            }
+    
+            if(newModel.dataPoints[i].tooltip != "") {
+                heightOfTheShape = heightOfTheShape - 80;
+                if(newModel.dataPoints[i].tooltip.length >= 10) {
+                    widthOfTheShape = widthOfTheShape + 16;
+                }else {
+                    widthOfTheShape = widthOfTheShape - 40;
+                }
+
+                if(heightOfTheShape >= 30) {
+                    heightOfTheShape = heightOfTheShape - 20;
+                }
+            }
+
+            if(DataStorage.showTooltip == true) {
+                this.drawingTooltipBox(xCenterCoordinate, yCenterCoordinate, widthOfTheShape, heightOfTheShape);
+                this.drawingTextOnTooltip(newModel, i, parentName, xCenterCoordinate, yCenterCoordinate, widthOfTheShape, heightOfTheShape);     
+            } 
+
+        }
+
+        public drawingTextOnTooltip(newModel: ViewModel, i, parentName, xCenterCoordinate, yCenterCoordinate, widthOfTheShape, heightOfTheShape) {
+            let headersArray = this.dataStringToHeadersArray(newModel,i);    
+            let dataString = "";
+            console.log(headersArray);
+            if(newModel.dataPoints[i].tooltip == "") {
+
+                dataString = headersArray[1] + ": " + newModel.dataPoints[i].title;
+                this.drawingTooltipText(dataString, xCenterCoordinate, yCenterCoordinate);
+                yCenterCoordinate = yCenterCoordinate + 20;
+                dataString = "";
+    
+                if(newModel.dataPoints[i].position == "" || newModel.dataPoints[i].position == null) {
+                    dataString = "";
+                }else {
+                    dataString = headersArray[2] + ": " + newModel.dataPoints[i].position;
+                    this.drawingTooltipText(dataString, xCenterCoordinate, yCenterCoordinate);
+                    yCenterCoordinate = yCenterCoordinate + 20;
+                    dataString = "";
+                }
+
+                if(newModel.dataPoints[i].team == "Fill" || newModel.dataPoints[i].team == "fill" || 
+                    newModel.dataPoints[i].team == "" || newModel.dataPoints[i].team == null) {
+                    dataString = headersArray[4] + ": " + " ";
+                    dataString = "";
+                }else {
+                    dataString = headersArray[4] + ": " + newModel.dataPoints[i].team;
+                    this.drawingTooltipText(dataString, xCenterCoordinate, yCenterCoordinate);
+                    yCenterCoordinate = yCenterCoordinate + 20;
+                    dataString = "";
+                }
+            
+                dataString = headersArray[3] + ": " + parentName;
+                this.drawingTooltipText(dataString, xCenterCoordinate, yCenterCoordinate);
+                yCenterCoordinate = yCenterCoordinate + 20;
+                dataString = "";
+    
+                dataString = "Level: " + newModel.dataPoints[i].lvl;
+                this.drawingTooltipText(dataString, xCenterCoordinate, yCenterCoordinate);
+                yCenterCoordinate = yCenterCoordinate + 20;
+                dataString = "";
+    
+                dataString = headersArray[0] + ": " + newModel.dataPoints[i].id;
+                this.drawingTooltipText(dataString, xCenterCoordinate, yCenterCoordinate);
+                yCenterCoordinate = yCenterCoordinate + 20;
+                dataString = "";
+            }
+                 
+
+            if(newModel.dataPoints[i].tooltip != "") {
+                dataString = newModel.dataPoints[i].tooltip;
+                this.drawingTooltipText(dataString, xCenterCoordinate, yCenterCoordinate);
+                dataString = "";
+            } 
+        }
+
+        public dataStringToHeadersArray(newModel: ViewModel, i) {
+            let dataStringForTooltip = "";
+            dataStringForTooltip = newModel.dataPoints[i].nameOfHeader;
+            let replaceArray = dataStringForTooltip.replace(/['"«»]/g, '');
+            let arrayWithoutSymbols = [];
+            for(let a = 0; a < replaceArray.length; a++) {
+                if(replaceArray[a] == "r") {
+                    a++;
+                    if(replaceArray[a] == ":") {
+                        a++;
+                        if(replaceArray[a] != "{") {
+                            do{
+                                arrayWithoutSymbols.push(replaceArray[a]);
+                                a++;
+                            }
+                            while(replaceArray[a] != "{");
+                        }
+                    }
+                }
+            }
+                    
+            let arrayToString = "";
+            for(let k = 0; k < arrayWithoutSymbols.length; k++) {
+                if(arrayWithoutSymbols[k] != "," && arrayWithoutSymbols[k] != "{" && 
+                    arrayWithoutSymbols[k] != "}" && arrayWithoutSymbols[k] != ":") {
+                    arrayToString += arrayWithoutSymbols[k];
+                }
+                if(arrayWithoutSymbols[k + 1] == arrayWithoutSymbols[k].toUpperCase()) {
+                    arrayToString += ",";
+                }
+            }
+
+            let arrayWithoutSymbolr = "";
+            for(let z = 0; z < arrayToString.length; z++) {
+                if(arrayToString[z] == "r"){
+                    if(arrayToString[z-1] != ",")  {
+                        arrayWithoutSymbolr += arrayToString[z];
+                    }
+                }
+                else {
+                    if(arrayToString[z-1] != ",")  {
+                        arrayWithoutSymbolr += arrayToString[z];
+                    }
+                }
+            }
+    
+            let headersArray = [];
+            let text = "";
+            for(let m = 0; m < arrayWithoutSymbolr.length; m++) {
+                if(arrayWithoutSymbolr[m] != ",") {
+                    text += arrayWithoutSymbolr[m];
+                }else {
+                    headersArray.push(text);
+                    text = "";
+                }
+            }
+    
+            let defaultArrayForTolltip = ["ID", "Name", "Position", "Мanager", "Team", "Tooltip"];
+            let countArray = 1;
+            for(let count = 0; count < headersArray.length; count++) {
+                if(headersArray[count].toUpperCase() == ("COLUMN" + countArray)) {
+                    headersArray[count] = defaultArrayForTolltip[count];
+                }
+                countArray++;
+            }
+            return headersArray;
+        }
+
+        public drawingTooltipBox(xCenterCoordinate, yCenterCoordinate, widthOfTheShape, heightOfTheShape) {
+            DataStorage.toolTipWindow = DataStorage.barGroup.append("rect")
+            .classed('toolTipWindow', true);
+
+        DataStorage.toolTipWindow
+            .style("fill", "#FFEFD5")
+            .style("stroke", "#808080")
+            .style("stroke-width", 2)
+            .attr({
+                rx: 6,
+                x: xCenterCoordinate - 34,
+                y: yCenterCoordinate + 10,
+                width: widthOfTheShape + 80,
+                height: heightOfTheShape + 93
+            });
+        }
+        
+
+        public drawingTooltipText(text, xCenterCoordinate, yCenterCoordinate) {
+            DataStorage.toolTip = DataStorage.barGroup.append("text")
+            .classed('toolTip', true);
+        DataStorage.toolTip
+            .text(text)
+            .style("stroke-width", 2)
+            .style("font-size", 12 + "px")
+            .style("fill", "#696969")
+            .style("text-align", "left")
+            .style("z-index", "999")
+            .attr({
+                x: xCenterCoordinate - 29,
+                y: yCenterCoordinate + 27
+            
+            });
+        }
+    
 
         //highlighting selected nodes with Ctrl
         public selectMultipleEvent(newModel: ViewModel, i, listTeams) {
@@ -459,7 +803,7 @@ module powerbi.extensibility.visual {
             }
         }
 
-        //collapsing event (folding / unfolding nodes)
+        //collapsing event (folding / unfolding nodes) (+/- for nodes)
         public clickEvent(options, newModel: ViewModel, nameOfTheParent, listTeams: TeamModelList, numberOfVisibleLevels, i) {
 
             DrawElements.deletingOldShapes();
