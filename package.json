@@ -6,5 +6,14 @@
     "d3": "^3.5.17",
     "powerbi-visuals-utils-colorutils": "^1.0.0",
     "powerbi-visuals-utils-dataviewutils": "1.2.0"
+  },
+  "scripts": {
+    "postinstall": "pbiviz update 1.7.0",
+    "pbiviz": "pbiviz",
+    "package": "pbiviz package",
+    "start": "pbiviz start"
+  },
+  "devDependencies": {
+    "powerbi-visuals-tools": "1.7.0"
   }
 }
