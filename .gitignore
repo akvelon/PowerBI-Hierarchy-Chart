@@ -5,6 +5,7 @@ dist
 packages
 typings
 .tmp
+.api
 
 # System folders
 ###################
