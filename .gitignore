@@ -1,0 +1,23 @@
+# Build and package folders
+###################
+build
+dist
+packages
+typings
+.tmp
+.api
+
+# System folders
+###################
+.DS_Store
+
+# Node & Bower & JSPM
+###################
+node_modules
+bower_components
+jspm_packages
+
+# Test reporters
+###################
+**/test/coverage
+report
