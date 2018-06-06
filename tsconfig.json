@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "ES5",
+    "sourceMap": true,
+    "out": "./.tmp/build/visual.js"
+  },
+  "files": [
+    ".api/v1.7.0/PowerBI-visuals.d.ts",
+    "node_modules/powerbi-visuals-utils-dataviewutils/lib/index.d.ts",
+    "node_modules/powerbi-visuals-utils-typeutils/lib/index.d.ts",
+    "node_modules/powerbi-visuals-utils-colorutils/lib/index.d.ts",
+    "node_modules/@types/d3/index.d.ts",
+    "src/settings.ts",
+    "src/hierarchyChart.ts",
+    "src/drawControlPanel.ts",
+    "src/drawElements.ts",
+    "src/calculationsForDrawing.ts",
+    "src/workWithTeams.ts",
+    "src/workWithWarning.ts",
+    "src/drawWarning.ts",
+    "src/dataInterfaces.ts",
+    "src/dataStorage.ts"
+  ]
+}
