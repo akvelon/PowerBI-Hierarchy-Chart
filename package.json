@@ -4,6 +4,7 @@
     "@types/d3": "^3.5.38",
     "bootstrap": "^3.3.7",
     "d3": "^3.5.17",
+    "d3plus": "^1.9.8",
     "powerbi-visuals-utils-colorutils": "^1.0.0",
     "powerbi-visuals-utils-dataviewutils": "1.2.0"
   },

@@ -363,26 +363,35 @@ module powerbi.extensibility.visual {
             let yCoordinate;
             if (isHeightGreaterThanWidth) {
                 writingMode = "tb";
-                xCoordinate = xCenterCoordinate + offsetValue;
-                yCoordinate = yCenterCoordinate - fontSizeValue * 3;
+                xCoordinate = xCenterCoordinate + widthOfTheShape / 4;
+                yCoordinate = yCenterCoordinate - heightOfTheShape / 4;
             }
             else {
                 writingMode = "bt";
                 xCoordinate = xCenterCoordinate;
                 yCoordinate = yCenterCoordinate - fontSizeValue * 3 - offsetValue;
             }
-            DataStorage.nameTextValue = DataStorage.barGroup.append("text")
-                .classed("nameTextValue", true);
+            DataStorage.nameTextValue = DataStorage.barGroup.append("foreignObject")
+                .classed("nameTextValue", true)
+                .style("width",  widthOfTheShape + "px")
+                .style("height", heightOfTheShape + "px");
 
             DataStorage.nameTextValue
-                .text(title)
                 .attr({
-                    x: xCoordinate,
-                    y: yCoordinate,
+                    x: xCoordinate - widthOfTheShape / 2,
+                    y: yCoordinate - heightOfTheShape / 2,
                     "text-anchor": "middle"
-                }).style("font-size", DataStorage.customFontSizeTitle + "px")
+                })
+                .append("xhtml:body")
+                .html("<span class='in-block'>" + title + "</span>")
+                .classed("foreign-body-row", true)
+                .style("width",  widthOfTheShape + "px")
+                .style("height", heightOfTheShape / 2 + "px")
+                .style("font-size", DataStorage.customFontSizeTitle + "px")
+                .style("line-height", DataStorage.customFontSizeTitle + "px")
                 .style("fill", DataStorage.colorName)
                 .style("writing-mode", writingMode)
+
                 .on("click", () => {
                     if((d3.event as MouseEvent).ctrlKey){
                         this.selectMultipleEvent(newModel, i, listTeams);
@@ -391,25 +400,21 @@ module powerbi.extensibility.visual {
                     }
                 })
 
-
-
                 // event for tooltip 
                 .on("mouseover", () => {
                     this.calculationCoordinatesForTooltipDrawing(newModel, i, listTeams,
                         xCenterCoordinate, yCenterCoordinate, widthOfTheShape, heightOfTheShape);
-
                 })
+
                 .on("mouseout", function() {
                     DataStorage.barGroup
                         .selectAll(".toolTip")
-                        .remove()
+                        .remove();
 
                     DataStorage.barGroup
                         .selectAll(".toolTipWindow")
                         .remove();
-                    
                   });
-                
         }
 
         public drawingSubtitle(
@@ -431,27 +436,35 @@ module powerbi.extensibility.visual {
             let yCoordinate;
             if (isHeightGreaterThanWidth) {
                 writingMode = "tb";
-                xCoordinate = xCenterCoordinate - offsetValue;
-                yCoordinate = yCenterCoordinate - fontSizeValue * 3;
+                xCoordinate = xCenterCoordinate - widthOfTheShape / 4;
+                yCoordinate = yCenterCoordinate - heightOfTheShape / 2;
             }
             else {
                 writingMode = "bt";
                 xCoordinate = xCenterCoordinate;
                 yCoordinate = yCenterCoordinate - fontSizeValue * 3 + offsetValue;
             }
-            DataStorage.subtitleTextValue = DataStorage.barGroup.append("text")
-                .classed("subtitleTextValue", true);
+            DataStorage.subtitleTextValue = DataStorage.barGroup.append("foreignObject")
+                .classed("subtitleTextValue", true)
+                .style("width",  widthOfTheShape + "px")
+                .style("height", heightOfTheShape + "px");
 
             DataStorage.subtitleTextValue
-                .text(newModel.dataPoints[i].position)
                 .attr({
-                    x: xCoordinate,
-                    y: yCoordinate,
+                    x: xCoordinate - widthOfTheShape / 2,
+                    y: yCoordinate - heightOfTheShape / 4,
                     "text-anchor": "middle"
                 })
+                .append("xhtml:body")
+                .html("<span class='in-block'>" + newModel.dataPoints[i].position + "</span>")
+                .classed("foreign-body-row", true)
+                .style("width",  widthOfTheShape + "px")
+                .style("height", heightOfTheShape / 2 + "px")
+                .style("font-size", DataStorage.customFontSizeTitle + "px")
+                .style("line-height", DataStorage.customFontSizeTitle + "px")
                 .style("fill", DataStorage.colorName)
-                .style("font-size", DataStorage.customFontSizeSubtitle + "px")
                 .style("writing-mode", writingMode)
+
                 .on("click", () => {
                     if((d3.event as MouseEvent).ctrlKey){
                         this.selectMultipleEvent(newModel, i, listTeams);
@@ -460,22 +473,20 @@ module powerbi.extensibility.visual {
                     }
                 })
 
-
                 // event for tooltip
                 .on("mouseover", () => {
                     this.calculationCoordinatesForTooltipDrawing(newModel, i, listTeams,
                         xCenterCoordinate, yCenterCoordinate, widthOfTheShape, heightOfTheShape);
-
                 })
+
                 .on("mouseout", function() {
                     DataStorage.barGroup
                         .selectAll(".toolTip")
-                        .remove()
+                        .remove();
 
                     DataStorage.barGroup
                         .selectAll(".toolTipWindow")
                         .remove();
-                    
                   });
         }
 
@@ -495,7 +506,6 @@ module powerbi.extensibility.visual {
             else {
                 drawControlPanel.resetAllSelectedItems(listTeams, newModel);
                 drawControlPanel.changeVisiblElements(1);
-                
             }
             DataStorage.makeSingleEvent = true;
         }
