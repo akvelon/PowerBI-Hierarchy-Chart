@@ -360,7 +360,7 @@ module powerbi.extensibility.visual {
         //click on empty space, reset selected id
         public resetSelectedItems(options, newModel: ViewModel, listTeams: TeamModelList) {
             DataStorage.backgroundWindow.append("rect")
-                .style("fill", "white")
+                .style("fill", "transparent")
                 .attr({
                     x: 0,
                     y: 0,
