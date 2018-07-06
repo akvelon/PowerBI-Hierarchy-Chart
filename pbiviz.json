@@ -4,7 +4,7 @@
     "displayName": "HierarhyChart",
     "guid": "chart6F792A8745784877BCD8F4ACA5AD4207",
     "visualClassName": "Visual",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "<p> Hierarchical information can be easily displayed within Power BI with the Hierarchy Chart custom visual from Akvelon. This Power BI add on is perfect for ranking different departments, jobs, and employees who make up an organization. It can also be used to show family history and visualize genealogy information. If your data can be visualized in a tree structure, the Hierarchy Chart can display it in an easy to read format.</p><p> Once the data source is imported into the Hierarchy Chart custom visual, each aspect of the display is fully customizable. Users can change the shape of the represented area, fonts, colors, keys, and more.</p><p> Each section is also expandable and collapsible allowing users to build out their Hierarchy Chart to its full size, and present only the necessary views depending on the audience.</p><p> Traditional organizational charts often go out of date thanks to turnover or department restructuring. The Hierarchy Chart custom visual makes it easy to update the data quickly with new information to help you keep the most current information in your display.</p>",
     "supportUrl": "http://community.powerbi.com/",
     "gitHubUrl": ""
