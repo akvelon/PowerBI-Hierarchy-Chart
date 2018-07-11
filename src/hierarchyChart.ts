@@ -23,7 +23,7 @@ module powerbi.extensibility.visual {
             DataStorage.selectionManager = options.host.createSelectionManager();
             DataStorage.divOuter = d3.select(options.element).append("div").classed("divOuter", true);
             DataStorage.divInner = DataStorage.divOuter.append("div");
-            DataStorage.svg = DataStorage.divInner.append("svg")
+            DataStorage.svg = DataStorage.divInner.append("svg");
             DataStorage.backgroundWindow = DataStorage.svg
                 .append("g")
                 .classed("backgroundWindow", true);
