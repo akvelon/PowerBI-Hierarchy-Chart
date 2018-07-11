@@ -5,7 +5,7 @@ module powerbi.extensibility.visual {
     import ColorHelper = powerbi.extensibility.utils.color.ColorHelper;
 
 
-    export class Visual implements IVisual {
+    export class HierarchyChartByAkvelon implements IVisual {
 
         public host: IVisualHost;
         private colorPalette: IColorPalette;
@@ -157,7 +157,7 @@ module powerbi.extensibility.visual {
 
             const instances = VisualSettings.enumerateObjectInstances(settings, options);
 
-            if (options.objectName === Visual.TeamsColorIdentifier.objectName) {
+            if (options.objectName === HierarchyChartByAkvelon.TeamsColorIdentifier.objectName) {
                 this.enumerateTeams(instances, options.objectName);
             }
             return instances;
@@ -302,7 +302,7 @@ module powerbi.extensibility.visual {
 
                 if (!viewModel.teamSet[team]) {
                     const color: string = this.getColor(
-                        Visual.TeamsColorIdentifier,
+                        HierarchyChartByAkvelon.TeamsColorIdentifier,
                         DataStorage.defaultColor,
                         categories[columnIndexes.category].objects
                         && categories[columnIndexes.category].objects[dataPointIndex]

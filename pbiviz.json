@@ -15,7 +15,7 @@
     "email": "pbisupport@akvelon.com"
   },
   "assets": {
-    "icon": "assets/icon.png"
+    "icon": "assets/icon_2.png"
   },
   "externalJS": [
     "node_modules/powerbi-visuals-utils-dataviewutils/lib/index.js",
