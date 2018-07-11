@@ -1,5 +1,5 @@
 {
-  "name": "visual",
+  "name": "hierarchychart",
   "dependencies": {
     "@types/d3": "^3.5.38",
     "bootstrap": "^3.3.7",
