@@ -254,7 +254,7 @@ module powerbi.extensibility.visual {
             for (let dataPointIndex: number = 0; dataPointIndex < amountOfDataPoints; dataPointIndex++) {
 
                 const id: string = categories[columnIndexes.category].values[dataPointIndex] as string;
-                let nameOfHeader : string
+                let nameOfHeader : string;
                 if(categories[columnIndexes.category].identity[dataPointIndex].key) {
                     nameOfHeader = categories[columnIndexes.category].identity[dataPointIndex].key as string;
                 }
@@ -322,7 +322,7 @@ module powerbi.extensibility.visual {
                 viewModel.dataPoints.push({
                     id,
                     title,
-                    reportTo: reportTo || " ",
+                    reportTo: reportTo,
                     lvl,
                     xCoordinate,
                     yCoordinate,

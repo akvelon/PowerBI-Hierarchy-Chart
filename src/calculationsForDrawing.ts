@@ -251,7 +251,6 @@ module powerbi.extensibility.visual {
         };
 
         for (let i = 0, len = cashModel.dataPoints.length; i < len; i++) {
-
             let searchTopRank: string = cashModel.dataPoints[i].reportTo;
             if (searchTopRank == null || searchTopRank == "" || searchTopRank == " ") {
                 cashModel.dataPoints[i].lvl = _lvl;
@@ -268,7 +267,7 @@ module powerbi.extensibility.visual {
             do {
                 for (let i = 0; i < cashModel.dataPoints.length; i++) {
 
-                    if (cashModel.dataPoints[i].reportTo == newViewModel.dataPoints[0].id) {
+                    if (cashModel.dataPoints[i].reportTo === newViewModel.dataPoints[0].id) {
 
                         cashModel.dataPoints[i].lvl = _lvl;
                         newViewModel.dataPoints.push(cashModel.dataPoints[i]);

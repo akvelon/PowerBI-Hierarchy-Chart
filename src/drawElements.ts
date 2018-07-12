@@ -383,7 +383,8 @@ module powerbi.extensibility.visual {
                     "text-anchor": "middle"
                 })
                 .append("xhtml:body")
-                .html("<span class='in-block'>" + title + "</span>")
+                .classed("in-block", true)
+                .text(title)
                 .classed("foreign-body-row", true)
                 .style("width",  widthOfTheShape + "px")
                 .style("height", heightOfTheShape / 2 + "px")
@@ -452,12 +453,14 @@ module powerbi.extensibility.visual {
             DataStorage.subtitleTextValue
                 .attr({
                     x: xCoordinate - widthOfTheShape / 2,
-                    y: yCoordinate - heightOfTheShape / 4,
+                    y: yCoordinate - heightOfTheShape / 4 - 3,
                     "text-anchor": "middle"
                 })
                 .append("xhtml:body")
-                .html("<span class='in-block'>" + newModel.dataPoints[i].position + "</span>")
+                .classed("in-block", true)
+                .text(newModel.dataPoints[i].position)
                 .classed("foreign-body-row", true)
+
                 .style("width",  widthOfTheShape + "px")
                 .style("height", heightOfTheShape / 2 + "px")
                 .style("font-size", DataStorage.customFontSizeTitle + "px")
@@ -515,6 +518,7 @@ module powerbi.extensibility.visual {
         // for pointing
         public calculationCoordinatesForTooltipDrawing(newModel: ViewModel, i, listTeams,
         xCenterCoordinate, yCenterCoordinate, widthOfTheShape, heightOfTheShape) {
+
             if(widthOfTheShape > 80) {
                 if(widthOfTheShape > 150) {
                     widthOfTheShape = widthOfTheShape - 100;
@@ -569,9 +573,9 @@ module powerbi.extensibility.visual {
                     parentName = newModel.dataPoints[j].title;
                 }
             }
-            if(newModel.dataPoints[i].reportTo == "" || newModel.dataPoints[i].reportTo == null) {
-                parentName = null;
-            }
+            // if(newModel.dataPoints[i].reportTo == "" || newModel.dataPoints[i].reportTo == null) {
+            //     parentName = null;
+            // }
     
             if(heightOfTheShape < 30) {
                 heightOfTheShape = heightOfTheShape + 20;
@@ -614,9 +618,9 @@ module powerbi.extensibility.visual {
         }
 
         public drawingTextOnTooltip(newModel: ViewModel, i, parentName, xCenterCoordinate, yCenterCoordinate, widthOfTheShape, heightOfTheShape) {
+            // debugger;
             let headersArray = this.dataStringToHeadersArray(newModel,i);    
             let dataString = "";
-            console.log(headersArray);
             if(newModel.dataPoints[i].tooltip == "") {
 
                 dataString = headersArray[1] + ": " + newModel.dataPoints[i].title;
