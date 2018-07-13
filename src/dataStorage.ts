@@ -44,6 +44,7 @@ module powerbi.extensibility.visual {
         public static showLegend: boolean;
         public static showWarning: boolean;
         public static showTooltip: boolean;
+        public static showWraps: boolean;
 
 
         //other variables

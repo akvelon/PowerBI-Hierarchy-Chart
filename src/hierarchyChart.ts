@@ -62,7 +62,8 @@ module powerbi.extensibility.visual {
             const legend = this.settings.legend;
             const warning = this.settings.warning;
             const tooltip = this.settings.tooltip;
-            
+            const wrap = this.settings.wrap;
+
 
             DataStorage.colorName = nodes.colorName;
             DataStorage.displayHeightAndWidth = nodes.displayHeightAndWidth;
@@ -84,6 +85,7 @@ module powerbi.extensibility.visual {
             DataStorage.showNodes = nodes.show;
             DataStorage.showWarning = warning.show;
             DataStorage.showTooltip = tooltip.show;
+            DataStorage.showWraps = wrap.show;
 
             let drawElements: DrawElements = new DrawElements();
             let calculationsForDrawing: CalculationsForDrawing = new CalculationsForDrawing();
