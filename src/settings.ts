@@ -9,8 +9,8 @@ module powerbi.extensibility.visual {
     public nodes: NodesSettings = new NodesSettings();
     public legend: LegendSettings = new LegendSettings();
     public warning: WarningSettings = new WarningSettings();
-
     public tooltip: TooltipSettings = new TooltipSettings();
+    public wrap: WrapSettings = new WrapSettings();
   }
 
   export class LevelsSettings {
@@ -48,8 +48,11 @@ module powerbi.extensibility.visual {
     public show: boolean = true;
   }
 
-
   export class TooltipSettings {
+    public show: boolean = true;
+  }
+
+  export class WrapSettings {
     public show: boolean = true;
   }
 }
