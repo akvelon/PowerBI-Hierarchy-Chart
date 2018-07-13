@@ -354,7 +354,12 @@ module powerbi.extensibility.visual {
             let writingMode;
             let xCoordinate;
             let yCoordinate;
-            if (isHeightGreaterThanWidth) {
+            if (isHeightGreaterThanWidth && !DataStorage.showWraps) {
+                writingMode = "tb";
+                xCoordinate = xCenterCoordinate + widthOfTheShape / 4;
+                yCoordinate = yCenterCoordinate - heightOfTheShape / 2 + offsetValue / 2;
+            }
+            else if (isHeightGreaterThanWidth && DataStorage.showWraps) {
                 writingMode = "tb";
                 xCoordinate = xCenterCoordinate + widthOfTheShape / 4;
                 yCoordinate = yCenterCoordinate - heightOfTheShape / 4;
