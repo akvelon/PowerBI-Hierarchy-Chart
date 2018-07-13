@@ -362,7 +362,7 @@ module powerbi.extensibility.visual {
             else if (isHeightGreaterThanWidth && DataStorage.showWraps) {
                 writingMode = "tb";
                 xCoordinate = xCenterCoordinate + widthOfTheShape / 4;
-                yCoordinate = yCenterCoordinate - heightOfTheShape / 4;
+                yCoordinate = yCenterCoordinate - heightOfTheShape / 2;
             }
             else {
                 writingMode = "bt";
@@ -387,7 +387,8 @@ module powerbi.extensibility.visual {
                     .text(title)
                     .classed("foreign-body-row", true)
                     .style("width",  widthOfTheShape + "px")
-                    .style("height", heightOfTheShape / 2 + "px")
+                    // .style("height", heightOfTheShape / 2 + "px")
+                    .style("height", isHeightGreaterThanWidth ? "100%" : heightOfTheShape / 2 + "px")
                     .style("font-size", DataStorage.customFontSizeTitle + "px")
                     .style("line-height", DataStorage.customFontSizeTitle + "px")
                     .style("fill", DataStorage.colorName)
