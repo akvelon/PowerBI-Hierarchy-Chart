@@ -652,9 +652,6 @@ module powerbi.extensibility.visual {
                     parentName = newModel.dataPoints[j].title;
                 }
             }
-            // if(newModel.dataPoints[i].reportTo == "" || newModel.dataPoints[i].reportTo == null) {
-            //     parentName = null;
-            // }
     
             if(heightOfTheShape < 30) {
                 heightOfTheShape = heightOfTheShape + 20;
