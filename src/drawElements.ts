@@ -503,7 +503,7 @@ module powerbi.extensibility.visual {
                 DataStorage.subtitleTextValue
                     .attr({
                         x: xCoordinate - widthOfTheShape / 2,
-                        y: yCoordinate - heightOfTheShape / 4,
+                        y: yCoordinate - heightOfTheShape / 2,
                         "text-anchor": "middle"
                     })
                     .append("xhtml:body")
@@ -512,7 +512,7 @@ module powerbi.extensibility.visual {
                     .classed("foreign-body-row", true)
 
                     .style("width",  widthOfTheShape + "px")
-                    .style("height", heightOfTheShape / 2 + "px")
+                    .style("height", isHeightGreaterThanWidth ? "100%" : heightOfTheShape / 2 + "px")
                     .style("font-size", DataStorage.customFontSizeTitle + "px")
                     .style("line-height", DataStorage.customFontSizeTitle + "px")
                     .style("fill", DataStorage.colorName)
