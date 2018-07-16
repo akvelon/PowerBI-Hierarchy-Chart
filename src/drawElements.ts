@@ -373,8 +373,8 @@ module powerbi.extensibility.visual {
             if(DataStorage.showWraps){
                 DataStorage.nameTextValue = DataStorage.barGroup.append("foreignObject")
                     .classed("nameTextValue", true)
-                    .style("width",  widthOfTheShape + "px")
-                    .style("height", heightOfTheShape / 2 + "px");
+                    .attr("width",  widthOfTheShape + "px")
+                    .attr("height", heightOfTheShape / 2 + "px");
                 DataStorage.nameTextValue
                     .attr({
                         x: isHeightGreaterThanWidth ? xCoordinate - widthOfTheShape / 4 : xCoordinate - widthOfTheShape / 2,
@@ -488,8 +488,8 @@ module powerbi.extensibility.visual {
             if(DataStorage.showWraps){
                 DataStorage.subtitleTextValue = DataStorage.barGroup.append("foreignObject")
                     .classed("subtitleTextValue", true)
-                    .style("width",  widthOfTheShape + "px")
-                    .style("height", heightOfTheShape / 2 + "px");
+                    .attr("width",  widthOfTheShape + "px")
+                    .attr("height", heightOfTheShape / 2 + "px");
                 DataStorage.subtitleTextValue
                     .attr({
                         x: isHeightGreaterThanWidth ? xCoordinate - widthOfTheShape / 4 + offsetValue / 2 : xCoordinate - widthOfTheShape / 2,
