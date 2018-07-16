@@ -493,52 +493,102 @@ module powerbi.extensibility.visual {
                 xCoordinate = xCenterCoordinate;
                 yCoordinate = yCenterCoordinate - fontSizeValue * 3 + offsetValue;
             }
-            DataStorage.subtitleTextValue = DataStorage.barGroup.append("foreignObject")
-                .classed("subtitleTextValue", true)
-                .style("width",  widthOfTheShape + "px")
-                .style("height", heightOfTheShape + "px");
 
-            DataStorage.subtitleTextValue
-                .attr({
-                    x: xCoordinate - widthOfTheShape / 2,
-                    y: yCoordinate - heightOfTheShape / 4 - 3,
-                    "text-anchor": "middle"
-                })
-                .append("xhtml:body")
-                .classed("in-block", true)
-                .text(newModel.dataPoints[i].position)
-                .classed("foreign-body-row", true)
+            if(DataStorage.showWraps){
+                DataStorage.subtitleTextValue = DataStorage.barGroup.append("foreignObject")
+                    .classed("subtitleTextValue", true)
+                    .style("width",  widthOfTheShape + "px")
+                    .style("height", heightOfTheShape + "px");
 
-                .style("width",  widthOfTheShape + "px")
-                .style("height", heightOfTheShape / 2 + "px")
-                .style("font-size", DataStorage.customFontSizeTitle + "px")
-                .style("line-height", DataStorage.customFontSizeTitle + "px")
-                .style("fill", DataStorage.colorName)
-                .style("writing-mode", writingMode)
+                DataStorage.subtitleTextValue
+                    .attr({
+                        x: xCoordinate - widthOfTheShape / 2,
+                        y: yCoordinate - heightOfTheShape / 4,
+                        "text-anchor": "middle"
+                    })
+                    .append("xhtml:body")
+                    .classed("in-block", true)
+                    .text(newModel.dataPoints[i].position)
+                    .classed("foreign-body-row", true)
 
-                .on("click", () => {
-                    if((d3.event as MouseEvent).ctrlKey){
-                        this.selectMultipleEvent(newModel, i, listTeams);
-                    } else{
-                        this.selectSingleEvent(newModel,i, listTeams);
-                    }
-                })
+                    .style("width",  widthOfTheShape + "px")
+                    .style("height", heightOfTheShape / 2 + "px")
+                    .style("font-size", DataStorage.customFontSizeTitle + "px")
+                    .style("line-height", DataStorage.customFontSizeTitle + "px")
+                    .style("fill", DataStorage.colorName)
+                    .style("writing-mode", writingMode)
 
-                // event for tooltip
-                .on("mouseover", () => {
-                    this.calculationCoordinatesForTooltipDrawing(newModel, i, listTeams,
-                        xCenterCoordinate, yCenterCoordinate, widthOfTheShape, heightOfTheShape);
-                })
+                    .on("click", () => {
+                        if((d3.event as MouseEvent).ctrlKey){
+                            this.selectMultipleEvent(newModel, i, listTeams);
+                        } else{
+                            this.selectSingleEvent(newModel,i, listTeams);
+                        }
+                    })
 
-                .on("mouseout", function() {
-                    DataStorage.barGroup
-                        .selectAll(".toolTip")
-                        .remove();
+                    // event for tooltip
+                    .on("mouseover", () => {
+                        this.calculationCoordinatesForTooltipDrawing(newModel, i, listTeams,
+                            xCenterCoordinate, yCenterCoordinate, widthOfTheShape, heightOfTheShape);
+                    })
 
-                    DataStorage.barGroup
-                        .selectAll(".toolTipWindow")
-                        .remove();
-                  });
+                    .on("mouseout", function() {
+                        DataStorage.barGroup
+                            .selectAll(".toolTip")
+                            .remove();
+
+                        DataStorage.barGroup
+                            .selectAll(".toolTipWindow")
+                            .remove();
+                    });
+            }
+            else {
+                DataStorage.nameTextValue = DataStorage.barGroup.append("text")
+                    .classed("nameTextValue", true)
+                    .style("width",  widthOfTheShape + "px")
+                    .style("height", heightOfTheShape + "px");
+
+                DataStorage.nameTextValue
+                    .attr({
+                        x: xCoordinate,
+                        y: yCoordinate + offsetValue,
+                        "text-anchor": "middle"
+                    })
+                    // .append("xhtml:body")
+                    // .classed("in-block", true)
+                    .text(newModel.dataPoints[i].position)
+                    // .classed("foreign-body-row", true)
+                    .style("width",  widthOfTheShape + "px")
+                    .style("height", heightOfTheShape / 2 + "px")
+                    .style("font-size", DataStorage.customFontSizeTitle + "px")
+                    .style("line-height", DataStorage.customFontSizeTitle + "px")
+                    .style("fill", DataStorage.colorName)
+                    .style("writing-mode", writingMode)
+
+                    .on("click", () => {
+                        if((d3.event as MouseEvent).ctrlKey){
+                            this.selectMultipleEvent(newModel, i, listTeams);
+                        } else{
+                            this.selectSingleEvent(newModel,i, listTeams);
+                        }
+                    })
+
+                    // event for tooltip
+                    .on("mouseover", () => {
+                        this.calculationCoordinatesForTooltipDrawing(newModel, i, listTeams,
+                            xCenterCoordinate, yCenterCoordinate, widthOfTheShape, heightOfTheShape);
+                    })
+                    .on("mouseout", function() {
+                        DataStorage.barGroup
+                            .selectAll(".toolTip")
+                            .remove();
+
+                        DataStorage.barGroup
+                            .selectAll(".toolTipWindow")
+                            .remove();
+                    });
+            }
+
         }
 
         // highlighting selected nodes withOut Ctrl
