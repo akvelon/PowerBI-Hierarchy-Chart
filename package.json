@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "name": "hierarchychart",
+=======
+  "name": "visual",
+>>>>>>> 7edf6f4fc3e86e9e37210736ada5002a051dfcbc
   "dependencies": {
     "@types/d3": "^3.5.38",
     "bootstrap": "^3.3.7",
