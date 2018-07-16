@@ -374,21 +374,19 @@ module powerbi.extensibility.visual {
                 DataStorage.nameTextValue = DataStorage.barGroup.append("foreignObject")
                     .classed("nameTextValue", true)
                     .style("width",  widthOfTheShape + "px")
-                    .style("height", heightOfTheShape + "px");
-
+                    .style("height", heightOfTheShape / 2 + "px");
                 DataStorage.nameTextValue
                     .attr({
-                        x: xCoordinate - widthOfTheShape / 2,
-                        y: yCoordinate - heightOfTheShape / 2,
+                        x: isHeightGreaterThanWidth ? xCoordinate - widthOfTheShape / 4 : xCoordinate - widthOfTheShape / 2,
+                        y: isHeightGreaterThanWidth ? yCoordinate - heightOfTheShape / 2 : yCoordinate - heightOfTheShape / 2 + offsetValue / 2,
                         "text-anchor": "middle"
                     })
                     .append("xhtml:body")
                     .classed("in-block", true)
                     .text(title)
                     .classed("foreign-body-row", true)
-                    .style("width",  widthOfTheShape + "px")
-                    // .style("height", heightOfTheShape / 2 + "px")
-                    .style("height", isHeightGreaterThanWidth ? "100%" : heightOfTheShape / 2 + "px")
+                    .style("width",  isHeightGreaterThanWidth ? widthOfTheShape / 2 + "px" : widthOfTheShape + "px")
+                    .style("height", isHeightGreaterThanWidth ? heightOfTheShape + "px" : heightOfTheShape / 2 + "px")
                     .style("font-size", DataStorage.customFontSizeTitle + "px")
                     .style("line-height", DataStorage.customFontSizeTitle + "px")
                     .style("fill", DataStorage.colorName)
@@ -411,7 +409,6 @@ module powerbi.extensibility.visual {
                         DataStorage.barGroup
                             .selectAll(".toolTip")
                             .remove();
-
                         DataStorage.barGroup
                             .selectAll(".toolTipWindow")
                             .remove();
@@ -422,17 +419,13 @@ module powerbi.extensibility.visual {
                     .classed("nameTextValue", true)
                     .style("width",  widthOfTheShape + "px")
                     .style("height", heightOfTheShape + "px");
-
                 DataStorage.nameTextValue
                     .attr({
                         x: xCoordinate,
-                        y: yCoordinate,
+                        y: isHeightGreaterThanWidth ? yCoordinate : yCoordinate - offsetValue,
                         "text-anchor": "middle"
                     })
-                    // .append("xhtml:body")
-                    // .classed("in-block", true)
                     .text(title)
-                    // .classed("foreign-body-row", true)
                     .style("width",  widthOfTheShape + "px")
                     .style("height", heightOfTheShape / 2 + "px")
                     .style("font-size", DataStorage.customFontSizeTitle + "px")
@@ -457,13 +450,11 @@ module powerbi.extensibility.visual {
                         DataStorage.barGroup
                             .selectAll(".toolTip")
                             .remove();
-
                         DataStorage.barGroup
                             .selectAll(".toolTipWindow")
                             .remove();
                     });
             }
-
         }
 
         public drawingSubtitle(
@@ -498,21 +489,19 @@ module powerbi.extensibility.visual {
                 DataStorage.subtitleTextValue = DataStorage.barGroup.append("foreignObject")
                     .classed("subtitleTextValue", true)
                     .style("width",  widthOfTheShape + "px")
-                    .style("height", heightOfTheShape + "px");
-
+                    .style("height", heightOfTheShape / 2 + "px");
                 DataStorage.subtitleTextValue
                     .attr({
-                        x: xCoordinate - widthOfTheShape / 2,
-                        y: yCoordinate - heightOfTheShape / 2,
+                        x: isHeightGreaterThanWidth ? xCoordinate - widthOfTheShape / 4 + offsetValue / 2 : xCoordinate - widthOfTheShape / 2,
+                        y: isHeightGreaterThanWidth ? yCoordinate - heightOfTheShape / 2 : yCoordinate - heightOfTheShape / 4 - offsetValue,
                         "text-anchor": "middle"
                     })
                     .append("xhtml:body")
                     .classed("in-block", true)
                     .text(newModel.dataPoints[i].position)
                     .classed("foreign-body-row", true)
-
-                    .style("width",  widthOfTheShape + "px")
-                    .style("height", isHeightGreaterThanWidth ? "100%" : heightOfTheShape / 2 + "px")
+                    .style("width",  isHeightGreaterThanWidth ? widthOfTheShape / 2 + "px" : widthOfTheShape + "px")
+                    .style("height", isHeightGreaterThanWidth ? heightOfTheShape + "px" : heightOfTheShape / 2 + "px")
                     .style("font-size", DataStorage.customFontSizeTitle + "px")
                     .style("line-height", DataStorage.customFontSizeTitle + "px")
                     .style("fill", DataStorage.colorName)
@@ -531,12 +520,10 @@ module powerbi.extensibility.visual {
                         this.calculationCoordinatesForTooltipDrawing(newModel, i, listTeams,
                             xCenterCoordinate, yCenterCoordinate, widthOfTheShape, heightOfTheShape);
                     })
-
                     .on("mouseout", function() {
                         DataStorage.barGroup
                             .selectAll(".toolTip")
                             .remove();
-
                         DataStorage.barGroup
                             .selectAll(".toolTipWindow")
                             .remove();
@@ -547,17 +534,13 @@ module powerbi.extensibility.visual {
                     .classed("nameTextValue", true)
                     .style("width",  widthOfTheShape + "px")
                     .style("height", heightOfTheShape + "px");
-
                 DataStorage.nameTextValue
                     .attr({
-                        x: xCoordinate,
-                        y: yCoordinate + offsetValue,
+                        x: isHeightGreaterThanWidth ? xCoordinate + offsetValue / 2 : xCoordinate,
+                        y: isHeightGreaterThanWidth ? yCoordinate + offsetValue : yCoordinate,
                         "text-anchor": "middle"
                     })
-                    // .append("xhtml:body")
-                    // .classed("in-block", true)
                     .text(newModel.dataPoints[i].position)
-                    // .classed("foreign-body-row", true)
                     .style("width",  widthOfTheShape + "px")
                     .style("height", heightOfTheShape / 2 + "px")
                     .style("font-size", DataStorage.customFontSizeTitle + "px")
@@ -582,13 +565,11 @@ module powerbi.extensibility.visual {
                         DataStorage.barGroup
                             .selectAll(".toolTip")
                             .remove();
-
                         DataStorage.barGroup
                             .selectAll(".toolTipWindow")
                             .remove();
                     });
             }
-
         }
 
         // highlighting selected nodes withOut Ctrl
