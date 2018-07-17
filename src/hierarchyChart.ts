@@ -51,6 +51,11 @@ module powerbi.extensibility.visual {
                 && options.dataViews
                 && options.dataViews[0]) as VisualSettings;
 
+            if(navigator.userAgent.search(/.NET/) > 0){
+                this.settings.wrap.show = false;
+            }
+
+
             viewModel.dataPoints = viewModel.dataPoints.sort(this.sortIndication);
             DataStorage.visualWindowWidth = options.viewport.width;
             DataStorage.visualWindowHeight = options.viewport.height;
@@ -86,6 +91,7 @@ module powerbi.extensibility.visual {
             DataStorage.showWarning = warning.show;
             DataStorage.showTooltip = tooltip.show;
             DataStorage.showWraps = wrap.show;
+            // DataStorage.showWraps = `\v`===`v` ? false : wrap.show;
 
             let drawElements: DrawElements = new DrawElements();
             let calculationsForDrawing: CalculationsForDrawing = new CalculationsForDrawing();
@@ -338,7 +344,7 @@ module powerbi.extensibility.visual {
                     isHeirs,
                     elementWeight,
                     parentStartX,
-                    nameOfHeader, 
+                    nameOfHeader,
                     tooltip
                 });
             }
