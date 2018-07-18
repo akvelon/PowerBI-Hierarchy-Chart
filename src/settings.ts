@@ -53,6 +53,6 @@ module powerbi.extensibility.visual {
     }
 
     export class WrapSettings {
-        public show: boolean = !(navigator.userAgent.search(/.NET/) > 0);
+        public show: boolean = !(navigator.userAgent.search(/.NET/) > 0 || navigator.userAgent.search(/Macintosh/) > 0);
     }
 }

@@ -51,7 +51,8 @@ module powerbi.extensibility.visual {
                 && options.dataViews
                 && options.dataViews[0]) as VisualSettings;
 
-            if(navigator.userAgent.search(/.NET/) > 0){
+            if(navigator.userAgent.search(/.NET/) > 0 ||
+                navigator.userAgent.search(/Macintosh/) > 0){
                 this.settings.wrap.show = false;
             }
 
