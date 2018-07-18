@@ -5,7 +5,7 @@ module powerbi.extensibility.visual {
     import ColorHelper = powerbi.extensibility.utils.color.ColorHelper;
 
 
-    export class Visual implements IVisual {
+    export class HierarchyChartByAkvelon implements IVisual {
 
         public host: IVisualHost;
         private colorPalette: IColorPalette;
@@ -23,7 +23,7 @@ module powerbi.extensibility.visual {
             DataStorage.selectionManager = options.host.createSelectionManager();
             DataStorage.divOuter = d3.select(options.element).append("div").classed("divOuter", true);
             DataStorage.divInner = DataStorage.divOuter.append("div");
-            DataStorage.svg = DataStorage.divInner.append("svg")
+            DataStorage.svg = DataStorage.divInner.append("svg");
             DataStorage.backgroundWindow = DataStorage.svg
                 .append("g")
                 .classed("backgroundWindow", true);
@@ -51,6 +51,12 @@ module powerbi.extensibility.visual {
                 && options.dataViews
                 && options.dataViews[0]) as VisualSettings;
 
+            if(navigator.userAgent.search(/.NET/) > 0 ||
+                navigator.userAgent.search(/Macintosh/) > 0){
+                this.settings.wrap.show = false;
+            }
+
+
             viewModel.dataPoints = viewModel.dataPoints.sort(this.sortIndication);
             DataStorage.visualWindowWidth = options.viewport.width;
             DataStorage.visualWindowHeight = options.viewport.height;
@@ -62,7 +68,8 @@ module powerbi.extensibility.visual {
             const legend = this.settings.legend;
             const warning = this.settings.warning;
             const tooltip = this.settings.tooltip;
-            
+            const wrap = this.settings.wrap;
+
 
             DataStorage.colorName = nodes.colorName;
             DataStorage.displayHeightAndWidth = nodes.displayHeightAndWidth;
@@ -84,6 +91,8 @@ module powerbi.extensibility.visual {
             DataStorage.showNodes = nodes.show;
             DataStorage.showWarning = warning.show;
             DataStorage.showTooltip = tooltip.show;
+            DataStorage.showWraps = wrap.show;
+            // DataStorage.showWraps = `\v`===`v` ? false : wrap.show;
 
             let drawElements: DrawElements = new DrawElements();
             let calculationsForDrawing: CalculationsForDrawing = new CalculationsForDrawing();
@@ -157,7 +166,7 @@ module powerbi.extensibility.visual {
 
             const instances = VisualSettings.enumerateObjectInstances(settings, options);
 
-            if (options.objectName === Visual.TeamsColorIdentifier.objectName) {
+            if (options.objectName === HierarchyChartByAkvelon.TeamsColorIdentifier.objectName) {
                 this.enumerateTeams(instances, options.objectName);
             }
             return instances;
@@ -254,7 +263,7 @@ module powerbi.extensibility.visual {
             for (let dataPointIndex: number = 0; dataPointIndex < amountOfDataPoints; dataPointIndex++) {
 
                 const id: string = categories[columnIndexes.category].values[dataPointIndex] as string;
-                let nameOfHeader : string
+                let nameOfHeader : string;
                 if(categories[columnIndexes.category].identity[dataPointIndex].key) {
                     nameOfHeader = categories[columnIndexes.category].identity[dataPointIndex].key as string;
                 }
@@ -302,7 +311,7 @@ module powerbi.extensibility.visual {
 
                 if (!viewModel.teamSet[team]) {
                     const color: string = this.getColor(
-                        Visual.TeamsColorIdentifier,
+                        HierarchyChartByAkvelon.TeamsColorIdentifier,
                         DataStorage.defaultColor,
                         categories[columnIndexes.category].objects
                         && categories[columnIndexes.category].objects[dataPointIndex]
@@ -322,7 +331,7 @@ module powerbi.extensibility.visual {
                 viewModel.dataPoints.push({
                     id,
                     title,
-                    reportTo: reportTo || " ",
+                    reportTo: reportTo,
                     lvl,
                     xCoordinate,
                     yCoordinate,
@@ -336,7 +345,7 @@ module powerbi.extensibility.visual {
                     isHeirs,
                     elementWeight,
                     parentStartX,
-                    nameOfHeader, 
+                    nameOfHeader,
                     tooltip
                 });
             }
